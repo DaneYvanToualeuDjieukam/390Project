@@ -40,22 +40,4 @@ public class ViewHolder {
         }
         return false;
     }
-
-    /*
-    // when toggle is pressed (off), put a gray background color and disable to ring switch
-    public void turn_device_Off(){
-        switch_Ring_State.setChecked(false); // set the device ring as false
-        switch_Ring_State.setEnabled(false); // To disable a Switch use following method
-        switch_Ring_State.setClickable(false); // To make switch not clickable use
-        toggle_Name_Power.setBackgroundColor(Color.argb(62, 186, 186, 186)); //gray color
-    }
-
-    // when toggle is pressed (on), put a green background color and enable to ring switch
-    public void turn_device_on(){
-        switch_Ring_State.setChecked(false); // set the device ring as false
-        switch_Ring_State.setEnabled(true); // To enable a Switch use following method
-        switch_Ring_State.setClickable(true); // To make switch clickable use
-        toggle_Name_Power.setBackgroundColor(Color.argb(100, 126, 251, 161)); // green color
-    }
-    */
 }

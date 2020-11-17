@@ -18,26 +18,15 @@ import com.google.firebase.database.FirebaseDatabase;
 public class delete_device extends AppCompatDialogFragment {
     protected TextView deviceNameTextView;
     private static final String USER = "user";
-    private String userID;
-    private DatabaseHelper dataBaseHelper;
-    String input_DeviceName = null;
     private Device device;
-    private FirebaseDatabase database;
-    private DatabaseReference mDatabase;
-    private int deviceList_size;
 
     //Default constructor
     public delete_device() {
         device = null;
-        userID = null;
-        deviceList_size = 0;
-        //do nothing
     }
 
-    public delete_device(Device device, String userID, int deviceList_size) {
+    public delete_device(Device device) {
         this.device = device;
-        this.userID = userID;
-        this.deviceList_size = deviceList_size;
     }
 
     @Override
@@ -55,10 +44,6 @@ public class delete_device extends AppCompatDialogFragment {
         //fragment_insert_device object links
         deviceNameTextView = view.findViewById(R.id.deviceNameTextView);
         deviceNameTextView.setText(device.getName());
-
-        // firebase setup
-        database = FirebaseDatabase.getInstance();
-        mDatabase = database.getReference(USER);
 
         builder.setView(view)
                 .setTitle("CONFIRM DELETE")

@@ -2,9 +2,7 @@ package com.example.project_v1.modules;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -43,7 +41,6 @@ public class DeviceManagement extends AppCompatActivity {
     private boolean skip_unwanted_onDataChangeListener; //as the name says  "see function set_The_Listeners
     final myAdapter arrayAdapter = new myAdapter();
     protected List<ViewHolder> viewHolderList;
-    private boolean skip_Toggle_Change_Update;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,10 +153,17 @@ public class DeviceManagement extends AppCompatActivity {
                 //Normal operation mode of the DeviceManagementActivity
                 else if(action_performed.equals("delete_device")){
                     Device dummyDevice = new Device(input_Device_Name, input_Device_State, input_Device_Power);
-                    deviceList.remove(dummyDevice);
+
+                    // loop throught the deviceList to get the targeted device
+                    for(int i = 0; i < deviceList.size(); i++){
+                        if(deviceList.get(i).getName().equals(input_Device_Name)){
+                            deviceList.remove(i);   //remove the device from the list
+                            break;
+                        }
+                    }
 
                     skip_unwanted_onDataChangeListener = true;// deactivate the firebase, onDataChange listener
-                    mDatabase.child("Devices").child(input_Device_Name).removeValue();
+                    mDatabase.child(userID).child("Devices").child(input_Device_Name).removeValue();
                     mDatabase.child(userID).child("numberOfDevices").setValue(Integer.toString(deviceList.size()));
                 }
                 else{
@@ -293,7 +297,7 @@ public class DeviceManagement extends AppCompatActivity {
                 @Override
                 public boolean onLongClick(View arg0) {
                     View view = getLayoutInflater().inflate(R.layout.deviceslayoutview, null);  //inflate the customized layout
-                    delete_device delete_device = new delete_device( deviceList.get((Integer) arg0.getTag()).return_Device(), userID, deviceList.size());
+                    delete_device delete_device = new delete_device( deviceList.get((Integer) arg0.getTag()).return_Device());
                     //transfer the user in to the dialog page
                     delete_device.show(getSupportFragmentManager(), "DeleteDeviceFragment");    //open the dialog
                     return true;
