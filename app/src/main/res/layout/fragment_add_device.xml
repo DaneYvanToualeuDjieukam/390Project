@@ -11,7 +11,7 @@
         android:id="@+id/deviceNameEditText"
         android:layout_width="212dp"
         android:layout_height="50dp"
-        android:enabled="false"
+
         android:gravity="center"
         android:hint="Device Name"
         android:inputType="textPersonName"
