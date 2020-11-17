@@ -104,6 +104,7 @@ public class User {
     }
 
     //**Device Setters - Getters*****************************
+    //return the device position
     public Device getDevice(int position) { //return a particular device
         return deviceList.get(position);
     }

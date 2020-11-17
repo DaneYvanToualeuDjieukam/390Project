@@ -2,20 +2,25 @@ package com.example.project_v1.modules;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Switch;
-import android.widget.TextView;
+import android.widget.ToggleButton;
 import com.example.project_v1.R;
 import com.example.project_v1.database.DatabaseHelper;
 import com.example.project_v1.dialogs.add_device;
+import com.example.project_v1.dialogs.delete_device;
 import com.example.project_v1.models.Device;
+import com.example.project_v1.models.ViewHolder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,7 +29,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.Inflater;
 
 public class DeviceManagement extends AppCompatActivity {
 
@@ -36,13 +40,18 @@ public class DeviceManagement extends AppCompatActivity {
     private static final String USER = "user";
     private  String userID;
     private DatabaseHelper dataBaseHelper;
+    private boolean skip_unwanted_onDataChangeListener; //as the name says  "see function set_The_Listeners
+    final myAdapter arrayAdapter = new myAdapter();
+    protected List<ViewHolder> viewHolderList;
+    private boolean skip_Toggle_Change_Update;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         dataBaseHelper = new DatabaseHelper(this);
         setContentView(R.layout.activity_device_management);
-        deviceList = new ArrayList<>();     //be sure the create an array list right at the beginning
+        deviceList = new ArrayList<>();//be sure the create an array list right at the beginning
+        viewHolderList = new ArrayList<>();  // store all the view of the listview
 
         getSupportActionBar().setTitle("Devices Management");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -61,10 +70,15 @@ public class DeviceManagement extends AppCompatActivity {
         //determine if there are any devices related to the user.
         //        //if yes, show them all
         //        //if not, empty
-        loadListView("Nothing",null);
+        loadListView("Nothing",null, null, "normal");
+        skip_unwanted_onDataChangeListener = true;
+        //  Set the different onclick
+        set_The_Listeners();
+    }
 
-        //To make it professional, the user name should be defined in the register page
-        //as well as
+    private void set_The_Listeners() {
+
+        // To make it professional, the user name should be defined in the register page
         addDeviceFloatingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,7 +88,37 @@ public class DeviceManagement extends AppCompatActivity {
                 Bundle args = new Bundle();
                 args.putString("userID", userID);
                 dialog.setArguments(args);
-                dialog.show(getSupportFragmentManager(), "InsetDeviceFragment");    //open the dialog
+                dialog.show(getSupportFragmentManager(), "InsertDeviceFragment");    //open the dialog
+            }
+        });
+
+        // Remember, a user can stop the device, but not make it ring on purpose!
+        // as the device is on, the arduino will make it ring or not
+        // as the device is off, the arduino will do nothing until it's put back "ON"
+        // On a Firebase user'status change,
+        // loop though all device and change their values in deviceList
+        // update list view
+        mDatabase.child(userID).child("Devices").addValueEventListener(new ValueEventListener() {
+            final myAdapter arrayAdapter = new myAdapter();     //array adaptor man
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(!skip_unwanted_onDataChangeListener){
+                        int counter = 0; //the order in the deviceList is the same as in the firebase/database
+                        //loop through all devices as there is no way to determine which one was changed
+                        for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                            //get the current status in database
+                            String dummy_state = userSnapshot.child("Status").getValue(String.class);
+                            deviceList.get(counter).setStatus(dummy_state);
+                            ++counter;
+                        }
+                        devicesListView.setAdapter(arrayAdapter);//write all in list view
+                    }
+                skip_unwanted_onDataChangeListener = false;     // activate the firebase, onDataChange listener
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {//do nothing
             }
         });
     }
@@ -82,8 +126,7 @@ public class DeviceManagement extends AppCompatActivity {
     //determine if there are any devices related to the user.
     //        //if yes, show them all
     //        //if not, empty
-    public void loadListView(final String input_Device_Name,final String input_Device_State) {
-        final myAdapter arrayAdapter = new myAdapter();
+    public void loadListView(final String input_Device_Name, final String input_Device_State, final String input_Device_Power, final String action_performed) {
         final DatabaseReference user_data = FirebaseDatabase.getInstance().getReference(USER).child(userID);//user's data -  devices included
 
         //addValueEventListener() keep listening to query or database reference it is attached to.
@@ -93,21 +136,33 @@ public class DeviceManagement extends AppCompatActivity {
         user_data.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
                 int numberOfDevices = 0;//as the name says
                 //as the "onDataChange" methods is asynchronous, it was too risky to create another one in "add_device"
                 //so to keep it to a minimum, the added device values are passed here and added to the firebase
                 //added to the firebase as we fill up the list view
                 //If adding a device, do not empty the deviceList,
                 //as one cannot read data from firebase and write at the same time (Data not directly update)
-                if (!input_Device_Name.equals("Nothing")) {
+                if (action_performed.equals("add_device")) {
                     //now,register the customized user info in "REALTIME DATABASE"
-                    Device dummyDevice = new Device(input_Device_Name, input_Device_State);
+                    Device dummyDevice = new Device(input_Device_Name, input_Device_State, input_Device_Power);
                     deviceList.add(dummyDevice);        //add the device in device list
-                    mDatabase.child(userID).child("Devices").child("Device " + Integer.toString(deviceList.size())).setValue(dummyDevice);//add the device - name and status
+
+                    //add the device name - and set the status as a child
+                    skip_unwanted_onDataChangeListener = true;// deactivate the firebase, onDataChange listener
+                    mDatabase.child(userID).child("numberOfDevices").setValue(Integer.toString(deviceList.size()));
+                    mDatabase.child(userID).child("Devices").child(dummyDevice.getName()).child("Power").setValue(dummyDevice.getStatus());
+                    mDatabase.child(userID).child("Devices").child(dummyDevice.getName()).child("Status").setValue(dummyDevice.getStatus());
                 }
                 //Normal operation mode of the DeviceManagementActivity
-                else {
+                else if(action_performed.equals("delete_device")){
+                    Device dummyDevice = new Device(input_Device_Name, input_Device_State, input_Device_Power);
+                    deviceList.remove(dummyDevice);
+
+                    skip_unwanted_onDataChangeListener = true;// deactivate the firebase, onDataChange listener
+                    mDatabase.child("Devices").child(input_Device_Name).removeValue();
+                    mDatabase.child(userID).child("numberOfDevices").setValue(Integer.toString(deviceList.size()));
+                }
+                else{
                     //delete all devices in list if not empty
                     //add the course to db
                     if (!deviceList.isEmpty()) {
@@ -122,14 +177,16 @@ public class DeviceManagement extends AppCompatActivity {
                         //for each data in related to each devices
                         for (DataSnapshot userSnapshot : dataSnapshot.child("Devices").getChildren()) {
                             //get the current values in database
-                            //on should write
-                            Device dummyDevice = new Device();
-                            dummyDevice = userSnapshot.getValue(Device.class); //return a device type (name and status)
+                            String dummy_name = userSnapshot.getKey();    //return the name of the device
+                            String dummy_power = userSnapshot.child("Power").getValue(String.class);
+                            String dummy_state = userSnapshot.child("Status").getValue(String.class);
+                            Device dummyDevice = new Device(dummy_name, dummy_state, dummy_power);; //return a device type (name and status)
                             deviceList.add(dummyDevice); //deviceList will be used in the ListView
                             dataBaseHelper.addDevice(dummyDevice);  //add the device to db
                         }
                     }
                 }
+                skip_unwanted_onDataChangeListener = false;
                 //write all in list view
                 devicesListView.setAdapter(arrayAdapter);
             }
@@ -174,23 +231,72 @@ public class DeviceManagement extends AppCompatActivity {
         //This function is automatically called when the list item view is ready to be displayed or about to be displayed.
         public View getView(int position, View convertView, ViewGroup parent) {
             View view = getLayoutInflater().inflate(R.layout.deviceslayoutview, null);  //inflate the customized layout!
+            ViewHolder viewHolder = new ViewHolder(view);   // each "layout" will have their own view and button associated to it
             final Switch sb =  view.findViewById(R.id.deviceState);
-
+            final ToggleButton deviceNameToggleButton= view.findViewById(R.id.deviceName);
             final int i = position;
+            skip_unwanted_onDataChangeListener = true;
 
-            //set the onclick listener
-            sb.setOnClickListener(new View.OnClickListener() {
+            // set the onclick listener
+            // change the background color if power is on (green) or off (gray)
+            // set a tag (position related) to find the corresponding object in ListView
+            viewHolder.toggle_Name_Power.setTag(position);
+            viewHolder.toggle_Name_Power.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onClick(View arg0) {
-                    //the future value of the switch
-                    if(sb.isChecked()){
-                        deviceList.get(i).setStatus("ON");
-                        update_device_state(i,deviceList.get(i).getName(),"ON");
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(!skip_unwanted_onDataChangeListener) {
+                        if (isChecked) {
+                            buttonView.setEnabled(true); // To enable a Switch use following method
+                            buttonView.setClickable(true); // To make switch clickable use
+                            buttonView.setChecked(false); // set the device ring as false
+                            buttonView.setBackgroundColor(Color.argb(100, 126, 251, 161)); // green color
+                            update_device_states((Integer) buttonView.getTag(), "OFF", "ON");     // update in firebase as well as in android
+                        } else {
+                            buttonView.setChecked(false); // set the device ring as false
+                            buttonView.setEnabled(false); // To disable a Switch use following method
+                            buttonView.setClickable(false); // To make switch not clickable use
+                            buttonView.setBackgroundColor(Color.argb(62, 186, 186, 186)); //gray color
+                            update_device_states((Integer) buttonView.getTag(), "OFF", "OFF");     // update in firebase as well as in android
+                        }
                     }
-                    else{
-                        deviceList.get(i).setStatus("OFF");
-                        update_device_state(i,deviceList.get(i).getName(),"OFF");
+                    skip_unwanted_onDataChangeListener = false;
+                }
+            });
+
+            // set the onclick listener
+            // update the ring state in android and firebase
+            // set a tag (position related) to find the corresponding device object in ListView
+            viewHolder.switch_Ring_State.setTag(position);
+            viewHolder.switch_Ring_State.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    // to prevent unwanted updates
+                    if(!skip_unwanted_onDataChangeListener) {
+                        //only if the device is not put in "off mode"
+                        //if (deviceList.get((Integer)buttonView.getTag()).getPower() == "ON") {
+                        //the future value of the switch
+                        if (sb.isChecked()) {
+                            skip_unwanted_onDataChangeListener = true;
+                            update_device_states((Integer) buttonView.getTag(), "ON", "ON");
+                        } else {
+                            skip_unwanted_onDataChangeListener = true;
+                            update_device_states((Integer) buttonView.getTag(), "OFF", "ON");
+                        }
                     }
+                }
+               // }
+            });
+
+            // Set the toggle button as clickable -
+            // On long click, output  a message box to confirm the delete option
+            viewHolder.toggle_Name_Power.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View arg0) {
+                    View view = getLayoutInflater().inflate(R.layout.deviceslayoutview, null);  //inflate the customized layout
+                    delete_device delete_device = new delete_device( deviceList.get((Integer) arg0.getTag()).return_Device(), userID, deviceList.size());
+                    //transfer the user in to the dialog page
+                    delete_device.show(getSupportFragmentManager(), "DeleteDeviceFragment");    //open the dialog
+                    return true;
                 }
             });
 
@@ -198,24 +304,46 @@ public class DeviceManagement extends AppCompatActivity {
             if(!deviceList.isEmpty()) {
                 //set the device's name and state individually
                 //For switch, see - https://www.tutlane.com/tutorial/android/android-switch-on-off-button-with-examples
-                TextView deviceNameTextView = view.findViewById(R.id.deviceName);
-                deviceNameTextView.setText(deviceList.get(position).getName());
+                deviceNameToggleButton.setTextColor(Color.argb(100, 0, 0, 0));  //black text color by default
+                deviceNameToggleButton.setText(deviceList.get(position).getName());     // default name
+                deviceNameToggleButton.setTextOff(deviceList.get(position).getName());  // name when pressed off
+                deviceNameToggleButton.setTextOn(deviceList.get(position).getName());   // name when pressed on
 
-                //set the state of the device
-                if(deviceList.get(position).getStatus().equals("ON")){
-                    sb.setChecked(true);
-                }else{
+                if(deviceList.get(position).getPower().equals("ON")) {
+                    sb.setEnabled(true); // To enable a Switch use following method
+                    sb.setClickable(true); // To make switch clickable use
+                    deviceNameToggleButton.setBackgroundColor(Color.argb(100, 126, 251, 161)); // green color
+                    deviceNameToggleButton.setChecked(true);
+                    //set the state of the device
+                    if (deviceList.get(position).getStatus().equals("ON")) {
+                        sb.setChecked(true);
+                    } else {
+                        sb.setChecked(false);
+                    }
+                }
+                else{
                     sb.setChecked(false);
+                    sb.setEnabled(false); // To enable a Switch use following method
+                    sb.setClickable(false); // To make switch clickable use
+                    deviceNameToggleButton.setBackgroundColor(Color.argb(62, 186, 186, 186)); //gray color
+                    deviceNameToggleButton.setChecked(false);
                 }
 
+                viewHolderList.add(viewHolder); // add the view object
             }
+            skip_unwanted_onDataChangeListener = false;
             return view;
         }
-    }
 
-    //Update the state of the device in the Firebase
-    public void update_device_state(final int device_position,final String device_name, final String device_state){
-        Device device = new Device(device_name,device_state);
-        mDatabase.child(userID).child("Devices").child("Device " + Integer.toString(device_position + 1)).setValue(device);
+        //Update the state of the device in the Firebase
+        public void update_device_states( int position, String device_state, String device_power){
+            deviceList.get(position).setStatus(device_state);   //set the ring state in android
+            deviceList.get(position).setPower(device_power);    // set the power state in android
+            // set the ring state in firebase
+            mDatabase.child(userID).child("Devices").child(deviceList.get(position).getName()).child("Status").setValue(device_state);
+            // set the power state in firebase
+            mDatabase.child(userID).child("Devices").child(deviceList.get(position).getName()).child("Power").setValue(device_power);
+        }
+
     }
 }

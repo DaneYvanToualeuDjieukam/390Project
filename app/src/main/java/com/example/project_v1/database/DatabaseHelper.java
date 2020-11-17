@@ -28,6 +28,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + Config.DEVICE_TABLE_NAME + " ("
             + Config.COLUMN_DEVICE_NAME + " TEXT NOT NULL, "
             + Config.COLUMN_DEVICE_STATE + " TEXT NOT NULL, "
+            + Config.COLUMN_DEVICE_POWER + " TEXT NOT NULL, "
             + Config.COLUMN_DEVICE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT)";
 
     public  DatabaseHelper (Context context) {
@@ -59,6 +60,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //no need to add the course_id, since it's auto incremental
         values.put( Config.COLUMN_DEVICE_NAME , device.getName());
         values.put( Config.COLUMN_DEVICE_STATE  , device.getStatus());
+        values.put( Config.COLUMN_DEVICE_POWER  , device.getStatus());
         // insert row
         db.insert(Config.DEVICE_TABLE_NAME, null, values);
         db.close();
@@ -67,7 +69,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /*
      * Deleting a device
      */
-    public void deleteCourse_And_Assignments(String device_Name) {
+    public void delete_Device(String device_Name) {
         //Here whereClause is optional, passing null will delete all rows in table.
         //delete function will return number of affected row if whereClause passed otherwise will return 0.
         //see - https://abhiandroid.com/database/operation-sqlite.html
@@ -97,12 +99,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /*
      * Edit a device's state
      */
-    public void editDeviceStatus(String device_name, String device_state) {
+    public void update_Device_Status(String device_name, String device_state) {
         //access the data base
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put( Config.COLUMN_DEVICE_STATE ,device_state);
+        // update only the device name
+        db.update(Config.DEVICE_TABLE_NAME, values, Config.COLUMN_DEVICE_NAME+ "=" + device_name , null);
+        db.close();
+    }
+
+    /*
+     * Edit a device's state
+     */
+    public void update_Device_Power(String device_name, String device_power) {
+        //access the data base
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put( Config.COLUMN_DEVICE_STATE ,device_power);
         // update only the device name
         db.update(Config.DEVICE_TABLE_NAME, values, Config.COLUMN_DEVICE_NAME+ "=" + device_name , null);
         db.close();
@@ -131,7 +147,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     //int id = cursor.getInt(cursor.getColumnIndex(COLUMN_DEVICE_ID));
                     String device_Name = cursor.getString(cursor.getColumnIndex(Config.COLUMN_DEVICE_NAME));
                     String device_State = cursor.getString(cursor.getColumnIndex(Config.COLUMN_DEVICE_STATE));
-                    deviceList.add(new Device(device_Name,device_State));
+                    String device_Power = cursor.getString(cursor.getColumnIndex(Config.COLUMN_DEVICE_POWER));
+                    deviceList.add(new Device(device_Name, device_State, device_Power));
                 } while(cursor.moveToNext());
             }
         }
@@ -208,8 +225,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 cursor.moveToFirst();   //point the first element of the table
                 String device_Name = cursor.getString(cursor.getColumnIndex(Config.COLUMN_DEVICE_NAME));
                 String device_State =  cursor.getString(cursor.getColumnIndex(Config.COLUMN_DEVICE_STATE));
+                String device_Power =  cursor.getString(cursor.getColumnIndex(Config.COLUMN_DEVICE_POWER));
                 device.setName(device_Name);
                 device.setStatus(device_State);
+                device.setPower(device_Power);
             }
         }
         catch(Exception e){

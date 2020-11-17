@@ -7,4 +7,5 @@ public class Config {
     public static final String COLUMN_DEVICE_ID=    "_id";
     public static final String COLUMN_DEVICE_STATE = "state";
     public static final String COLUMN_DEVICE_NAME= "name";
+    public static final String COLUMN_DEVICE_POWER= "power";
 }
