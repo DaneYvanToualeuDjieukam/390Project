@@ -90,7 +90,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                                 Toast.makeText(getApplicationContext(),"Sign Up Successful!",Toast.LENGTH_LONG).show();
                                 FirebaseUser user= task.getResult().getUser(); //From Authentication (identifier,providers,created, SignIn,user uid)
-                                user_KeyID = user.getUid();//Authentication USER UID!!!
+                                user_KeyID = user.getUid();   //the user id was way too long for arduino
 
                                 //now,register the customized user info in "REALTIME DATABASE"
                                 User thisUser = new User(email,password,username);
@@ -98,6 +98,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                                 //pass the userID to the deviceManagement Page
                                 Intent intent  = new Intent(RegisterActivity.this,DeviceManagement.class);
+                                //intent.putExtra("userID", user_KeyID);
                                 intent.putExtra("userID", user_KeyID);
                                 startActivity(intent);
 

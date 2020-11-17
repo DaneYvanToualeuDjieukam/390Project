@@ -81,10 +81,6 @@ public class DeviceManagement extends AppCompatActivity {
             public void onClick(View v) {
                 Context Context = v.getContext();
                 add_device dialog = new add_device();
-                //transfer the user in to the dialog page
-                Bundle args = new Bundle();
-                args.putString("userID", userID);
-                dialog.setArguments(args);
                 dialog.show(getSupportFragmentManager(), "InsertDeviceFragment");    //open the dialog
             }
         });

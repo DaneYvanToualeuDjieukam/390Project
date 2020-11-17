@@ -19,6 +19,7 @@ public class add_device extends AppCompatDialogFragment {
     protected EditText deviceName;
     private static final String USER = "user";
     private String userID;
+    private String userEmail;
     private DatabaseHelper dataBaseHelper;
     String input_DeviceName = null;
 
@@ -37,7 +38,6 @@ public class add_device extends AppCompatDialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.fragment_add_device, null);
-        userID = getArguments().getString("userID");        //retrieve the user's ID
 
         //fragment_insert_device object links
         deviceName = view.findViewById(R.id.deviceNameEditText);
