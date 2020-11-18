@@ -16,7 +16,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
-
+///testing
     protected EditText emailTextView;
     protected EditText passwordTextView;
     protected Button signinButton;
