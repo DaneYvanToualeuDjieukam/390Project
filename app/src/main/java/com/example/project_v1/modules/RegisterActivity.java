@@ -22,6 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterActivity extends AppCompatActivity {
 
+
     protected EditText emailEditText;
     protected EditText passwordEditText;
     protected EditText confirmPasswordEditText;
