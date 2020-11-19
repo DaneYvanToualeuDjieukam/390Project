@@ -3,9 +3,15 @@ package com.example.project_v1.modules;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -148,7 +154,7 @@ notification();
 
 
 
- /*       if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
         {
             NotificationChannel channel = new NotificationChannel("n","n", NotificationManager.IMPORTANCE_DEFAULT);
 
@@ -160,10 +166,11 @@ notification();
 
             .setContentTitle("Hi")
             .setContentText("Code Sphere")
+            .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
 NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
-managerCompat.notify(999,builder.build());*/
+managerCompat.notify(999,builder.build());
 
 
     }
