@@ -9,11 +9,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".modules.Settings"
+        <activity
+            android:name=".modules.Settings"
             android:parentActivityName=".modules.RegisterActivity"></activity>
         <activity android:name=".modules.DeviceManagement" />
         <activity android:name=".modules.RegisterActivity" />
         <activity android:name=".modules.MainActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
