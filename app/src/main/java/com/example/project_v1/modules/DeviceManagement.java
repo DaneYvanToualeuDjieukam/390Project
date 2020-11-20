@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Switch;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 import com.example.project_v1.R;
 import com.example.project_v1.database.DatabaseHelper;
@@ -92,20 +93,6 @@ public class DeviceManagement extends AppCompatActivity {
 
     private void push_notification() {
 
-       /* mDatabase.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists())
-                {
-
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });*/
 
         mDatabase.addChildEventListener(new ChildEventListener() {
                                             @Override
@@ -115,7 +102,8 @@ public class DeviceManagement extends AppCompatActivity {
 
                                             @Override
                                             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-notification();
+                                                notification();
+
                                             }
 
                                             @Override
@@ -151,8 +139,10 @@ notification();
 
     private void notification(){
 
-        PowerManager pm = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
+
+       PowerManager pm = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
         boolean isScreenOn = Build.VERSION.SDK_INT >= 20 ? pm.isInteractive() : pm.isScreenOn(); // check if screen is on
+
         if (!isScreenOn) {
 
         if (!isScreenOn) {
@@ -181,7 +171,33 @@ NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
 managerCompat.notify(999,builder.build());
 
 
-    }}
+    }
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+        {
+            NotificationChannel channel = new NotificationChannel("n","n", NotificationManager.IMPORTANCE_DEFAULT);
+
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this,"n")
+
+                .setContentTitle("Fire Detection System")
+                .setContentText("FDS has detected a FIRE or SMOKE!")
+                .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
+        managerCompat.notify(999,builder.build());
+
+    }
+
+
+
+
+
+
 
     public void accessSettings(){
         settingsButton.setOnClickListener(new View.OnClickListener() {
