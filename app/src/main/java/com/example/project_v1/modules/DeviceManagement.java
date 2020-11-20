@@ -54,6 +54,8 @@ public class DeviceManagement extends AppCompatActivity {
     final myAdapter arrayAdapter = new myAdapter();
     protected List<ViewHolder> viewHolderList;
 
+    String emaill;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +79,7 @@ public class DeviceManagement extends AppCompatActivity {
         //retrieve the user email
         Intent intent = getIntent();
         userID = intent.getStringExtra(("userID"));        //all user shall have one and only one email
+        emaill =userID;
 
         //determine if there are any devices related to the user.
         //        //if yes, show them all
@@ -198,12 +201,12 @@ managerCompat.notify(999,builder.build());
 
 
 
-
     public void accessSettings(){
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent  = new Intent(DeviceManagement.this,Settings.class);
+                intent.putExtra("userID",emaill);
                 startActivity(intent);
             }
         });

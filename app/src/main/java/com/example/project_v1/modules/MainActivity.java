@@ -2,13 +2,18 @@ package com.example.project_v1.modules;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.example.project_v1.R;
+import com.example.project_v1.database.MyService;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -27,6 +32,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //foregrounservice
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.FOREGROUND_SERVICE},PackageManager.PERMISSION_GRANTED);
 
         //get all button and text related to the mainActivity layout
         emailTextView=findViewById(R.id.emailTextView);
@@ -60,6 +68,12 @@ public class MainActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 Toast.makeText(MainActivity.this, "Signed in", Toast.LENGTH_LONG).show();
+
+
+                                Intent serviceIntent = new Intent(MainActivity.this, MyService.class);
+                                startService(serviceIntent);
+
+
                                 //can only have one type of value per extra
                                 //don't use the @, as users can have multiple emails in gmail/yahoo/hotmail,etc.
                                 Intent intent = new Intent(getApplicationContext(), DeviceManagement.class);
