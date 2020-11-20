@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -150,7 +151,14 @@ notification();
 
     private void notification(){
 
+        PowerManager pm = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
+        boolean isScreenOn = Build.VERSION.SDK_INT >= 20 ? pm.isInteractive() : pm.isScreenOn(); // check if screen is on
+        if (!isScreenOn) {
 
+        if (!isScreenOn) {
+            PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "myApp:notificationLock");
+            wl.acquire(3000); //set your time in milliseconds
+        }
 
 
 
@@ -164,8 +172,8 @@ notification();
 
     NotificationCompat.Builder builder = new NotificationCompat.Builder(this,"n")
 
-            .setContentTitle("Hi")
-            .setContentText("Code Sphere")
+            .setContentTitle("Fire Detection System")
+            .setContentText("FDS has detected a FIRE or SMOKE!")
             .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
@@ -173,7 +181,7 @@ NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
 managerCompat.notify(999,builder.build());
 
 
-    }
+    }}
 
     public void accessSettings(){
         settingsButton.setOnClickListener(new View.OnClickListener() {
