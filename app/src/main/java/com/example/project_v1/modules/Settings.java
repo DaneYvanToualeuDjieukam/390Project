@@ -27,8 +27,6 @@ public class Settings extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
     private static final String USER = "user";
-    private  String userID;
-    private String UID;
 
 
     @Override
@@ -42,9 +40,6 @@ public class Settings extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
 
-        Intent intent = getIntent();
-        userID = intent.getStringExtra(("userID"));
-        UID=userID;
 
 
         final FirebaseUser userr = mAuth.getCurrentUser();
@@ -61,7 +56,7 @@ public class Settings extends AppCompatActivity {
         getSupportActionBar().setTitle("Settings");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        emailEditText.setText(userID);
+
 
 
         resetPasswordButton.setOnClickListener(new View.OnClickListener() {
@@ -72,7 +67,7 @@ public class Settings extends AppCompatActivity {
 
             final AlertDialog.Builder passwordResetDialog = new AlertDialog.Builder(view.getContext());
             passwordResetDialog.setTitle("Reset Password?");
-            passwordResetDialog.setMessage("Enter Your Email To Receive Reset Link");
+            passwordResetDialog.setMessage("Enter New Password");
             passwordResetDialog.setView(resetPassword);
 
             passwordResetDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
