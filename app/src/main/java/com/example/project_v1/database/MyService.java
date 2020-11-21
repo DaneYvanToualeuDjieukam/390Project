@@ -10,8 +10,10 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
@@ -25,7 +27,10 @@ public class MyService extends Service {
 
     @Override
     public void onCreate() {
-        super.onCreate();}
+        super.onCreate();
+
+
+    }
 
 
 
@@ -36,6 +41,7 @@ public class MyService extends Service {
         super.onDestroy();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
@@ -43,12 +49,18 @@ try{
     Intent notificationIntent = new Intent(this, MainActivity.class);
     PendingIntent pendingIntent = PendingIntent.getActivity(this,0,notificationIntent,0);
 
-   /* Notification notification = new NotificationCompat.Builder(this,CHANNEL_ID)
+    Notification notification = new NotificationCompat.Builder(this,CHANNEL_ID)
             .setContentTitle("Fire Detection System")
             .setContentText("RUNNING")
-            .set
-            .setContentIntent()*/
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentIntent(pendingIntent)
+            .build();
 
+    startForeground(1,notification);
+
+    NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID,"Fire Detection System Service",NotificationManager.IMPORTANCE_DEFAULT);
+    NotificationManager notificationManager = getSystemService(NotificationManager.class);
+    notificationManager.createNotificationChannel(notificationChannel);
 }
 catch (Exception e){
     e.printStackTrace();
