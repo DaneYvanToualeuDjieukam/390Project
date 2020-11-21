@@ -22,122 +22,36 @@ import com.example.project_v1.modules.MainActivity;
 
 public class MyService extends Service {
 
-    private static final String CHANNEL_ID = "MyNotificationChannel";
-
-
+    public static final String CHANNEL_ID = "exampleServiceChannel";
     @Override
     public void onCreate() {
         super.onCreate();
-
-
     }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
 
+        Notification notification = new NotificationCompat.Builder(this,CHANNEL_ID)
+                .setContentTitle("Fire Detection System")
+                .setContentText("Ensuring You Receive Notifications")
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .build();
 
+        startForeground(1,notification);
 
+        return START_STICKY;
+
+    }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-
-try{
-    Intent notificationIntent = new Intent(this, MainActivity.class);
-    PendingIntent pendingIntent = PendingIntent.getActivity(this,0,notificationIntent,0);
-
-    Notification notification = new NotificationCompat.Builder(this,CHANNEL_ID)
-            .setContentTitle("Fire Detection System")
-            .setContentText("RUNNING")
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentIntent(pendingIntent)
-            .build();
-
-    startForeground(1,notification);
-
-    NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID,"Fire Detection System Service",NotificationManager.IMPORTANCE_DEFAULT);
-    NotificationManager notificationManager = getSystemService(NotificationManager.class);
-    notificationManager.createNotificationChannel(notificationChannel);
-}
-catch (Exception e){
-    e.printStackTrace();
-}
-
-
-
-        return START_STICKY;
-    }
-
-
-
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
-    }
-
-
-
-
-
-    private void notification(){
-
-
-        PowerManager pm = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
-        boolean isScreenOn = Build.VERSION.SDK_INT >= 20 ? pm.isInteractive() : pm.isScreenOn(); // check if screen is on
-
-        if (!isScreenOn) {
-
-            if (!isScreenOn) {
-                PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "myApp:notificationLock");
-                wl.acquire(3000); //set your time in milliseconds
-            }
-
-
-
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            {
-                NotificationChannel channel = new NotificationChannel("n","n", NotificationManager.IMPORTANCE_DEFAULT);
-
-                NotificationManager manager = getSystemService(NotificationManager.class);
-                manager.createNotificationChannel(channel);
-            }
-
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this,"n")
-
-                    .setContentTitle("Fire Detection System")
-                    .setContentText("FDS has detected a FIRE or SMOKE!")
-                    .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-            NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
-            managerCompat.notify(999,builder.build());
-
-
-        }
-
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-        {
-            NotificationChannel channel = new NotificationChannel("n","n", NotificationManager.IMPORTANCE_DEFAULT);
-
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(channel);
-        }
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this,"n")
-
-                .setContentTitle("Fire Detection System")
-                .setContentText("FDS has detected a FIRE or SMOKE!")
-                .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
-        managerCompat.notify(999,builder.build());
-
     }
 
 }

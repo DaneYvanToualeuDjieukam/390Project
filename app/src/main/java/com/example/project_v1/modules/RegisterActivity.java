@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import com.example.project_v1.R;
+import com.example.project_v1.database.MyService;
 import com.example.project_v1.models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -97,6 +98,11 @@ public class RegisterActivity extends AppCompatActivity {
                                 User thisUser = new User(email,password,username);
                                 mDatabase.child(user_KeyID).setValue(thisUser);//add the username - title will be  a unique Key
 
+
+                                startService(); //Goes to MYSERVICE CLASS to start service for notification even when app killed
+
+
+
                                 //pass the userID to the deviceManagement Page
                                 Intent intent  = new Intent(RegisterActivity.this,DeviceManagement.class);
                                 //intent.putExtra("userID", user_KeyID);
@@ -160,5 +166,11 @@ public class RegisterActivity extends AppCompatActivity {
     //each "main" user should have an unique email
     private void updateUI (FirebaseUser currentUser, String email){
         mDatabase.child(currentUser.getUid()).child("Username").setValue(email);//add the username
+    }
+
+
+    public void startService(){
+        Intent serviceIntent = new Intent(this, MyService.class);
+        startService(serviceIntent);
     }
 }

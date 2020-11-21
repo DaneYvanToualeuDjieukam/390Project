@@ -70,8 +70,7 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(MainActivity.this, "Signed in", Toast.LENGTH_LONG).show();
 
 
-                                Intent serviceIntent = new Intent(MainActivity.this, MyService.class);
-                                startService(serviceIntent);
+                                startService(); //Goes to MYSERVICE CLASS to start service for notification even when app killed
 
 
                                 //can only have one type of value per extra
@@ -94,5 +93,10 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
+    }
+
+    public void startService(){
+        Intent serviceIntent = new Intent(this,MyService.class);
+        startService(serviceIntent);
     }
 }
