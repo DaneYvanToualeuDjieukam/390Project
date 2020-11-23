@@ -53,7 +53,7 @@ public class DeviceManagement extends AppCompatActivity {
     private boolean skip_unwanted_onDataChangeListener; //as the name says  "see function set_The_Listeners
     final myAdapter arrayAdapter = new myAdapter();
     protected List<ViewHolder> viewHolderList;
-
+String userUID;
 
 
     @Override
@@ -65,7 +65,7 @@ public class DeviceManagement extends AppCompatActivity {
         viewHolderList = new ArrayList<>();  // store all the view of the listview
 
         getSupportActionBar().setTitle("Devices Management");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
         //Database related
         database = FirebaseDatabase.getInstance();
@@ -79,7 +79,7 @@ public class DeviceManagement extends AppCompatActivity {
         //retrieve the user email
         Intent intent = getIntent();
         userID = intent.getStringExtra(("userID"));        //all user shall have one and only one email
-
+        userUID = userID;
 
         //determine if there are any devices related to the user.
         //        //if yes, show them all
@@ -206,7 +206,7 @@ managerCompat.notify(999,builder.build());
             @Override
             public void onClick(View v) {
                 Intent intent  = new Intent(DeviceManagement.this,Settings.class);
-              ;
+              ;intent.putExtra("userID", userUID);
                 startActivity(intent);
             }
         });

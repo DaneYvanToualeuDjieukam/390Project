@@ -7,9 +7,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.project_v1.R;
@@ -17,8 +19,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class Settings extends AppCompatActivity {
 
@@ -34,27 +39,67 @@ public class Settings extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        getSupportActionBar().setTitle("Settings");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         //Database related
         database = FirebaseDatabase.getInstance();
         mDatabase = database.getReference(USER);
         mAuth = FirebaseAuth.getInstance();
 
-
+        Intent intent = getIntent();
+        final String userUID = intent.getStringExtra(("userID"));
 
 
         final FirebaseUser userr = mAuth.getCurrentUser();
 
         if(userr==null){Toast.makeText(getApplicationContext(),"USER NULL", Toast.LENGTH_LONG).show();  }
 
+
+        final TextView emailAddress;
+        final TextView username;
+        Button resetEmailButton;
         Button resetPasswordButton;
-        EditText emailEditText;
 
+
+
+        emailAddress = findViewById(R.id.userUserTextview);
+        username = findViewById(R.id.emailUserText);
+        resetEmailButton= findViewById(R.id.resetEmailButton);
         resetPasswordButton = findViewById(R.id.resetPasswordButton);
-        emailEditText = findViewById(R.id.emailEditText);
 
 
-        getSupportActionBar().setTitle("Settings");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("user").child(userUID).child("username");
+
+reference.addValueEventListener(new ValueEventListener() {
+    @Override
+    public void onDataChange(@NonNull DataSnapshot snapshot) {
+        username.setText(snapshot.getValue().toString());
+    }
+
+    @Override
+    public void onCancelled(@NonNull DatabaseError error) {
+
+    }
+});
+
+        DatabaseReference referencee = FirebaseDatabase.getInstance().getReference().child("user").child(userUID).child("email");
+
+        referencee.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                emailAddress.setText(snapshot.getValue().toString());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
+
+
 
 
 
@@ -73,10 +118,13 @@ public class Settings extends AppCompatActivity {
             passwordResetDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 
                 public void onClick(DialogInterface dialogInterface, int i) {
-String newPassword= resetPassword.getText().toString();
+final String newPassword= resetPassword.getText().toString();
 userr.updatePassword(newPassword).addOnSuccessListener(new OnSuccessListener<Void>() {
     @Override
     public void onSuccess(Void aVoid) {
+        String idd=userUID;
+
+        FirebaseDatabase.getInstance().getReference().child("user").child(idd).child("password").setValue(newPassword);
         Toast.makeText(Settings.this,"Password Reset Sucessfully",Toast.LENGTH_LONG).show();
 
     }
@@ -108,6 +156,64 @@ passwordResetDialog.create().show();
 
 
             });
+
+
+
+        resetEmailButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                final EditText resetEmail = new EditText(view.getContext());
+
+                final AlertDialog.Builder emailResetDialog = new AlertDialog.Builder(view.getContext());
+                emailResetDialog.setTitle("Reset Email?");
+                emailResetDialog.setMessage("Enter New Email");
+                emailResetDialog.setView(resetEmail);
+
+                emailResetDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        final String newEmail= resetEmail.getText().toString();
+                        userr.updateEmail(newEmail).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                String idd=userUID;
+
+                                FirebaseDatabase.getInstance().getReference().child("user").child(idd).child("email").setValue(newEmail);
+                                Toast.makeText(Settings.this,"Email Reset Sucessfully",Toast.LENGTH_LONG).show();
+
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(Settings.this,"Email Reset Failed",Toast.LENGTH_LONG).show();
+
+                            }
+                        });
+                    }
+                });
+
+
+                emailResetDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+                emailResetDialog.create().show();
+
+            }
+
+
+
+
+
+
+
+        });
+
+
         }
 
-    }
+
+}

@@ -6,20 +6,61 @@
     android:layout_height="match_parent"
     tools:context=".modules.Settings">
 
-    <EditText
-        android:id="@+id/emailEditText"
+    <TextView
+        android:id="@+id/emailUserText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="130dp"
+        android:layout_marginTop="20dp"
         android:ems="10"
 
         android:inputType="textPersonName"
-        android:text="Email" />
+        android:textSize="24sp" />
 
     <Button
         android:id="@+id/resetPasswordButton"
-        android:layout_width="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="600dp"
+        android:layout_height="40dp"
         android:text="Reset Password" />
+
+    <Button
+        android:id="@+id/resetEmailButton"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="10dp"
+
+        android:layout_marginTop="600dp"
+        android:text="RESET EMAIL" />
+
+    <TextView
+        android:id="@+id/emailTextView"
+        android:layout_width="68dp"
+        android:layout_height="43dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="70dp"
+        android:autoSizeMaxTextSize="30sp"
+        android:text="Email:"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/userUserTextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="80dp"
+        android:layout_marginTop="70dp"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/usernameTextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
+        android:text="Username:"
+        android:textSize="24sp"
+        tools:text="Username:" />
 </RelativeLayout>

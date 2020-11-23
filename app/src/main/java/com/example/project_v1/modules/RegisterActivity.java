@@ -46,7 +46,7 @@ public class RegisterActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(TAG);
 
         //get all editTexts from the layout
-        emailEditText = findViewById(R.id.emailEditText);
+        emailEditText = findViewById(R.id.emailUserText);
         passwordEditText = findViewById(R.id.passwordEditText);
         confirmPasswordEditText = findViewById(R.id.confirmPasswordEditText);
         usernameEditText = findViewById(R.id.userNameEditText);
