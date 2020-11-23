@@ -9,8 +9,8 @@
 
     <Button
         android:id="@+id/settingsButton"
-        android:layout_width="120dp"
-        android:layout_height="61dp"
+        android:layout_width="114dp"
+        android:layout_height="wrap_content"
 
         android:layout_marginLeft="20dp"
         android:layout_marginTop="500dp"
@@ -19,21 +19,20 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginLeft="310dp"
         android:layout_marginTop="500dp"
-        android:layout_marginLeft="320dp"
         android:clickable="true"
         android:focusable="true"
-        app:srcCompat="@android:drawable/ic_input_add"
-        />
+        app:srcCompat="@android:drawable/ic_input_add" />
 
 
     <ListView
         android:id="@+id/deviceListView"
-        android:layout_width="408dp"
-        android:layout_marginTop="10dp"
-        android:layout_height="432dp">
+        android:layout_width="match_parent"
+        android:layout_height="481dp"
+        android:layout_marginTop="10dp">
 
 
     </ListView>
