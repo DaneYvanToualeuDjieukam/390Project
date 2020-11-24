@@ -108,14 +108,29 @@ String userUID;
 
                                             @Override
                                             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                                                    Boolean gg=false;
 
                                                 String change =snapshot.getRef().getKey().toString();   //GETS NAME OF DEVICE INFO CHANGED
 
                                                 String check = snapshot.child("Status").getValue().toString();  //CHECKS IF STATUS "ON"
 
+                                                if(check.contains("N")){gg=true;
 
-                                                if(check=="ON")
-                                                 notification(change);
+                                                }
+
+
+
+if(gg==true){
+                                              notification(change);}
+
+
+
+
+                                                /*Toast.makeText(getApplicationContext(),check,Toast.LENGTH_LONG).show();*/
+
+
+
+
 
                                             }
 
@@ -151,6 +166,9 @@ String userUID;
     }
 
     private void notification(String changedInfo){
+
+
+
 
        PowerManager pm = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
         boolean isScreenOn = Build.VERSION.SDK_INT >= 20 ? pm.isInteractive() : pm.isScreenOn(); // check if screen is on

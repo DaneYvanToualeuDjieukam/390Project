@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
 ///testing
@@ -27,12 +28,15 @@ public class MainActivity extends AppCompatActivity {
     protected Button signinButton;
     protected Button registerButton;
     FirebaseAuth fAuth;
+FirebaseDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        database = FirebaseDatabase.getInstance();
         //foregrounservice
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.FOREGROUND_SERVICE},PackageManager.PERMISSION_GRANTED);
 
@@ -71,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                                 startService(); //Goes to MYSERVICE CLASS to start service for notification even when app killed
-
+database.goOnline();
 
                                 //can only have one type of value per extra
                                 //don't use the @, as users can have multiple emails in gmail/yahoo/hotmail,etc.

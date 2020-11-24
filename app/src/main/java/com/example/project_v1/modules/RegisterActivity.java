@@ -45,6 +45,8 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
         getSupportActionBar().setTitle(TAG);
 
+        database = FirebaseDatabase.getInstance();
+
         //get all editTexts from the layout
         emailEditText = findViewById(R.id.emailUserText);
         passwordEditText = findViewById(R.id.passwordEditText);
@@ -100,7 +102,7 @@ public class RegisterActivity extends AppCompatActivity {
 
 
                                 startService(); //Goes to MYSERVICE CLASS to start service for notification even when app killed
-
+database.goOnline();
 
 
                                 //pass the userID to the deviceManagement Page

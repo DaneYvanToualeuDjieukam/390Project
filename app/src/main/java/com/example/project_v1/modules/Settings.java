@@ -31,6 +31,7 @@ public class Settings extends AppCompatActivity {
     private FirebaseDatabase database;                          //All database data
     private DatabaseReference mDatabase;//user's info (name, email, password and devices)
     private FirebaseAuth mAuth;
+    private FirebaseUser userrr;
 
     private static final String USER = "user";
 
