@@ -97,7 +97,10 @@ String userUID;
     private void push_notification() {
 
 
-        mDatabase.addChildEventListener(new ChildEventListener() {
+
+
+
+        mDatabase.child(userUID).child("Devices").addChildEventListener(new ChildEventListener() {
                                             @Override
                                             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
@@ -105,7 +108,14 @@ String userUID;
 
                                             @Override
                                             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                                                notification();
+
+                                                String change =snapshot.getRef().getKey().toString();   //GETS NAME OF DEVICE INFO CHANGED
+
+                                                String check = snapshot.child("Status").getValue().toString();  //CHECKS IF STATUS "ON"
+
+
+                                                if(check=="ON")
+                                                 notification(change);
 
                                             }
 
@@ -140,8 +150,7 @@ String userUID;
 
     }
 
-    private void notification(){
-
+    private void notification(String changedInfo){
 
        PowerManager pm = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
         boolean isScreenOn = Build.VERSION.SDK_INT >= 20 ? pm.isInteractive() : pm.isScreenOn(); // check if screen is on
@@ -166,7 +175,7 @@ String userUID;
     NotificationCompat.Builder builder = new NotificationCompat.Builder(this,"n")
 
             .setContentTitle("Fire Detection System")
-            .setContentText("FDS has detected a FIRE or SMOKE!")
+            .setContentText("FDS has detected a FIRE or SMOKE!" +"/n"+"Device:"+changedInfo)
             .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
@@ -187,7 +196,7 @@ managerCompat.notify(999,builder.build());
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this,"n")
 
                 .setContentTitle("Fire Detection System")
-                .setContentText("FDS has detected a FIRE or SMOKE!")
+                .setContentText("FDS has detected a FIRE or SMOKE!" +"\n"+"Device:"+changedInfo)
                 .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
@@ -195,6 +204,40 @@ managerCompat.notify(999,builder.build());
         managerCompat.notify(999,builder.build());
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
