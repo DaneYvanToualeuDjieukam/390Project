@@ -63,4 +63,13 @@
         android:text="Username:"
         android:textSize="14sp"
         tools:text="Username:" />
+
+    <Button
+        android:id="@+id/signOutButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="400dp"
+        android:text="Sign Out" />
 </RelativeLayout>

@@ -61,6 +61,7 @@ public class Settings extends AppCompatActivity {
         final TextView username;
         Button resetEmailButton;
         Button resetPasswordButton;
+        Button signOutButton;
 
 
 
@@ -68,6 +69,7 @@ public class Settings extends AppCompatActivity {
         username = findViewById(R.id.emailUserText);
         resetEmailButton= findViewById(R.id.resetEmailButton);
         resetPasswordButton = findViewById(R.id.resetPasswordButton);
+        signOutButton = findViewById(R.id.signOutButton);
 
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("user").child(userUID).child("username");
@@ -164,7 +166,7 @@ passwordResetDialog.create().show();
             @Override
             public void onClick(View view) {
 
-               
+
 
                 final EditText resetEmail = new EditText(view.getContext());
 
@@ -213,6 +215,20 @@ passwordResetDialog.create().show();
 
 
 
+        });
+
+
+
+        signOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                stopService();
+
+                Intent signout = new Intent(getApplicationContext(),MainActivity.class);
+                startActivity(signout);
+
+            }
         });
 
 
