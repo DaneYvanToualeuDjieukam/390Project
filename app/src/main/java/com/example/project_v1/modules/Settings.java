@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.project_v1.R;
+import com.example.project_v1.database.MyService;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -163,6 +164,8 @@ passwordResetDialog.create().show();
             @Override
             public void onClick(View view) {
 
+               
+
                 final EditText resetEmail = new EditText(view.getContext());
 
                 final AlertDialog.Builder emailResetDialog = new AlertDialog.Builder(view.getContext());
@@ -214,6 +217,14 @@ passwordResetDialog.create().show();
 
 
         }
+
+
+
+        public void stopService(){
+        Intent serviceIntent = new Intent(this, MyService.class);
+        stopService(serviceIntent);
+        }
+
 
 
 }
