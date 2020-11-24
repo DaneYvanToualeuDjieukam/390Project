@@ -490,7 +490,7 @@ managerCompat.notify(999,builder.build());
                 deviceNameToggleButton.setTextColor(Color.argb(100, 0, 0, 0));  //black text color by default
                 deviceNameToggleButton.setText(deviceList.get(position).getName());     // default name
                 deviceNameToggleButton.setTextOff(deviceList.get(position).getName());  // name when pressed off
-                deviceNameToggleButton.setTextOn(deviceList.get(position).getName());   // name when pressed on
+                deviceNameToggleButton.setTextOn(deviceList.get(position).getName());   // name when pressed onN
 
                 if(deviceList.get(position).getPower().equals("ON")) {
                     sb.setEnabled(true); // To enable a Switch use following method
