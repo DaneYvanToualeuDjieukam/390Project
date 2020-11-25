@@ -2,6 +2,7 @@ package com.example.project_v1.modules;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -11,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
 import com.example.project_v1.R;
 import com.example.project_v1.database.MyService;
 import com.example.project_v1.models.User;
@@ -24,8 +26,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class RegisterActivity extends AppCompatActivity {
-
+public class Register1 extends AppCompatActivity {
 
     protected EditText emailEditText;
     protected EditText passwordEditText;
@@ -102,11 +103,11 @@ public class RegisterActivity extends AppCompatActivity {
 
 
 
-                             /*   user=mAuth.getCurrentUser();
+                                user=mAuth.getCurrentUser();
                                 Task<Void> verification_email_sent = user.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-                                        Toast.makeText(RegisterActivity.this, "Verification Email Sent", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(Register1.this, "Verification Email Sent", Toast.LENGTH_SHORT).show();
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
@@ -114,7 +115,7 @@ public class RegisterActivity extends AppCompatActivity {
                                         Log.d(TAG, "onFailure: Email not sent" + e.getMessage());
 
                                     }
-                                });*/
+                                });
 
 
                                 //now,register the customized user info in "REALTIME DATABASE"
@@ -127,7 +128,7 @@ public class RegisterActivity extends AppCompatActivity {
 
 
                                 //pass the userID to the deviceManagement Page
-                                Intent intent  = new Intent(RegisterActivity.this,DeviceManagement.class);
+                                Intent intent  = new Intent(Register1.this,DeviceManagement.class);
                                 //intent.putExtra("userID", user_KeyID);
                                 intent.putExtra("userID", user_KeyID);
                                 startActivity(intent);

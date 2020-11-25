@@ -51,7 +51,7 @@ FirebaseDatabase database;
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent  = new Intent(MainActivity.this,RegisterActivity.class);
+                Intent intent  = new Intent(MainActivity.this,Register1.class);
                 startActivity(intent);
             }
         });
@@ -75,7 +75,7 @@ FirebaseDatabase database;
 
 
                                 startService(); //Goes to MYSERVICE CLASS to start service for notification even when app killed
-database.goOnline();
+
 
                                 //can only have one type of value per extra
                                 //don't use the @, as users can have multiple emails in gmail/yahoo/hotmail,etc.

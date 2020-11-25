@@ -2,24 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.project_v1">
 
-
-
-
-
-
-
-
-
-
-
-
-
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
     <application
@@ -30,16 +17,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".modules.Register1"></activity>
 
-        <service android:name=".database.MyService"/>
+        <service android:name=".database.MyService" />
 
         <activity
             android:name=".modules.Settings"
-            android:parentActivityName=".modules.RegisterActivity"></activity>
+            android:parentActivityName=".modules.RegisterActivity" />
         <activity android:name=".modules.DeviceManagement" />
         <activity android:name=".modules.RegisterActivity" />
         <activity android:name=".modules.MainActivity">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

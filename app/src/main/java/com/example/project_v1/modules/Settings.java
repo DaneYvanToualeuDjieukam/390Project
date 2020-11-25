@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,6 +19,7 @@ import com.example.project_v1.R;
 import com.example.project_v1.database.MyService;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -34,6 +36,8 @@ public class Settings extends AppCompatActivity {
     private FirebaseUser userrr;
 
     private static final String USER = "user";
+
+    private static final String TAG = "CHANGE EMAIL";
 
 
     @Override
@@ -187,6 +191,24 @@ passwordResetDialog.create().show();
 
                                 FirebaseDatabase.getInstance().getReference().child("user").child(idd).child("email").setValue(newEmail);
                                 Toast.makeText(Settings.this,"Email Reset Sucessfully",Toast.LENGTH_LONG).show();
+
+
+                                userrr=mAuth.getCurrentUser();
+                                Task<Void> verification_email_sent = userrr.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Toast.makeText(Settings.this, "Verification Email Sent", Toast.LENGTH_SHORT).show();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.d(TAG, "onFailure: Email not sent" + e.getMessage());
+
+                                    }
+                                });
+
+
+
 
                             }
                         }).addOnFailureListener(new OnFailureListener() {

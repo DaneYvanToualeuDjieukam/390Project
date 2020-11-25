@@ -126,7 +126,7 @@ if(gg==true){
 
 
 
-                                                /*Toast.makeText(getApplicationContext(),check,Toast.LENGTH_LONG).show();*/
+
 
 
 
