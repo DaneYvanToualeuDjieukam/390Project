@@ -99,7 +99,7 @@ public class Register1 extends AppCompatActivity {
 
                                 Toast.makeText(getApplicationContext(),"Sign Up Successful!",Toast.LENGTH_LONG).show();
                                 FirebaseUser user= task.getResult().getUser(); //From Authentication (identifier,providers,created, SignIn,user uid)
-                                user_KeyID = user.getUid();   //the user id was way too long for arduino
+                                user_KeyID = user.getUid();   //the user id was way too long for arduinoo
 
 
 
