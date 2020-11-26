@@ -68,6 +68,11 @@ public class Settings extends AppCompatActivity {
         Button resetPasswordButton;
         Button signOutButton;
 
+        TextView verifyMsg;
+        Button resendCode;
+
+
+
 
 
         emailAddress = findViewById(R.id.userUserTextview);
@@ -75,6 +80,34 @@ public class Settings extends AppCompatActivity {
         resetEmailButton= findViewById(R.id.resetEmailButton);
         resetPasswordButton = findViewById(R.id.resetPasswordButton);
         signOutButton = findViewById(R.id.signOutButton);
+
+        verifyMsg= findViewById(R.id.verifyMsg);
+        resendCode= findViewById(R.id.resendCode);
+
+        if(!userr.isEmailVerified()){
+            resendCode.setVisibility(View.VISIBLE);
+            verifyMsg.setVisibility(View.VISIBLE);
+
+            resendCode.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View view) {
+                    userr.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(view.getContext(),"Verification Email Has Been Sent",Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("tag","onfailure:email not sent" + e.getMessage());
+                        }
+                    });
+                }
+            });
+
+
+        }
+
 
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("user").child(userUID).child("username");

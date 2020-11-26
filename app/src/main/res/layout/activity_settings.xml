@@ -72,4 +72,22 @@
         android:layout_marginRight="20dp"
         android:layout_marginTop="400dp"
         android:text="Sign Out" />
+
+    <TextView
+        android:id="@+id/verifyMsg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="270dp"
+        android:text="Email Not Verfied!"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/resendCode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="300dp"
+        android:text="Verify Now"
+        android:visibility="gone" />
 </RelativeLayout>
