@@ -47,9 +47,10 @@ public class DeviceManagement extends AppCompatActivity {
     private List<Device> deviceList;                           //contains all devices form a user
     protected FloatingActionButton addDeviceFloatingButton;     //add a device
     private FirebaseDatabase database;                          //All database data
-    private DatabaseReference mDatabase;                        //user's info (name, email, password and devices)
+    private DatabaseReference mDatabase;//user's info (name, email, password and devices)
+    private FirebaseAuth Fauth;
     private static final String USER = "user";
-    private  String userID;
+    private static   String userID;
     private DatabaseHelper dataBaseHelper;
     private boolean skip_unwanted_onDataChangeListener; //as the name says  "see function set_The_Listeners
     final myAdapter arrayAdapter = new myAdapter();
@@ -58,12 +59,23 @@ String userUID;
 
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        userID = Fauth.getUid();
+        userUID=userID;
+
+
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         dataBaseHelper = new DatabaseHelper(this);
         setContentView(R.layout.activity_device_management);
         deviceList = new ArrayList<>();//be sure the create an array list right at the beginning
         viewHolderList = new ArrayList<>();  // store all the view of the listview
+Fauth = FirebaseAuth.getInstance();
+
 
         getSupportActionBar().setTitle("Devices Management");
 
@@ -329,6 +341,15 @@ managerCompat.notify(999,builder.build());
     //        //if yes, show them all
     //        //if not, empty
     public void loadListView(final String input_Device_Name, final String input_Device_State, final String input_Device_Power, final String action_performed) {
+       if(userID==null || userID.equals( "null")){
+
+
+
+        userID = Fauth.getUid();
+
+       userUID=userID;}
+
+
         final DatabaseReference user_data = FirebaseDatabase.getInstance().getReference(USER).child(userID);//user's data -  devices included
 
         //addValueEventListener() keep listening to query or database reference it is attached to.

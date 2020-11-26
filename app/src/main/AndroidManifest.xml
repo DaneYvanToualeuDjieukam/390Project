@@ -23,7 +23,7 @@
 
         <activity
             android:name=".modules.Settings"
-            android:parentActivityName=".modules.RegisterActivity" />
+            android:parentActivityName=".modules.DeviceManagement" />
         <activity android:name=".modules.DeviceManagement" />
         <activity android:name=".modules.RegisterActivity" />
         <activity android:name=".modules.MainActivity">
