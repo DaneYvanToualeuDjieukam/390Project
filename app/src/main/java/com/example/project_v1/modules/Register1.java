@@ -123,12 +123,12 @@ public class Register1 extends AppCompatActivity {
                                 mDatabase.child(user_KeyID).setValue(thisUser);//add the username - title will be  a unique Key
 
 
-                                startService(); //Goes to MYSERVICE CLASS to start service for notification even when app killed
+
 
 
 
                                 //pass the userID to the deviceManagement Page
-                                Intent intent  = new Intent(Register1.this,DeviceManagement.class);
+                                Intent intent  = new Intent(Register1.this,MainActivity.class);
                                 //intent.putExtra("userID", user_KeyID);
                                 intent.putExtra("userID", user_KeyID);
                                 startActivity(intent);

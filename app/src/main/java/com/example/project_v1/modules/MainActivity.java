@@ -47,6 +47,7 @@ FirebaseDatabase database;
         registerButton=findViewById(R.id.registerButtonnn);
         fAuth= FirebaseAuth.getInstance();  //create a firebase weblink
 
+
         //go to register page
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,6 +63,8 @@ FirebaseDatabase database;
             @Override
             public void onClick(View v) {
 
+
+
                 final String userEmail = emailTextView.getText().toString();
                 final String password = passwordTextView.getText().toString();
 
@@ -71,6 +74,13 @@ FirebaseDatabase database;
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
+
+
+                                FirebaseUser userk = fAuth.getCurrentUser();
+
+                                if (userk.isEmailVerified()==true){
+
+
                                 Toast.makeText(MainActivity.this, "Signed in", Toast.LENGTH_LONG).show();
 
 
@@ -84,6 +94,11 @@ FirebaseDatabase database;
                                 String dummyUID = fAuth.getUid().toString();
                                 intent.putExtra("userID", dummyUID);       //pass the userID
                                 startActivity(intent);
+
+                            } else {
+                                    fAuth.signOut();
+                                    Toast.makeText(MainActivity.this, "Email Not Verified.",
+                                        Toast.LENGTH_SHORT).show();}
 
                             }
                             else {Toast.makeText(MainActivity.this, "Authentication failed.",
