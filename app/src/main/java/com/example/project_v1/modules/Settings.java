@@ -256,8 +256,12 @@ passwordResetDialog.create().show();
             public void onClick(View view) {
 
                 stopService();
-           /*     mAuth.getCurrentUser().delete();*/
-               mAuth.signOut();
+
+
+
+              mAuth.signOut();
+
+
                 database.goOffline();
 
 
@@ -268,28 +272,57 @@ passwordResetDialog.create().show();
         });
 
 
-        deleteAcc.setOnClickListener(new View.OnClickListener() {
+
+
+
+
+
+       deleteAcc.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view)
+            {
+                final AlertDialog.Builder deleteAccount = new AlertDialog.Builder(view.getContext());
+                deleteAccount.setTitle("Delete Account?");
+                deleteAccount.setMessage("Are you sure you want to delete your account?");
+
+
+                deleteAccount.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        stopService();
 
 
 
-                stopService();
+                        mAuth.getCurrentUser().delete();
+                        database.goOffline();
 
-                /*mDatabase.child(userUID).setValue(null);*/
+                        Toast.makeText(Settings.this,"Account Deleted",Toast.LENGTH_LONG).show();
+                        Intent signoutt = new Intent(getApplicationContext(),MainActivity.class);
+                        startActivity(signoutt);
 
-                mAuth.getCurrentUser().delete();
-                database.goOffline();
+                    }
+                });
 
 
-                Intent signout = new Intent(getApplicationContext(),MainActivity.class);
-                startActivity(signout);
 
+
+                deleteAccount.setNegativeButton("No", new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+                deleteAccount.create().show();
             }
         });
 
 
-        }//
+
+
+
+
+
+    }
 
 
 
