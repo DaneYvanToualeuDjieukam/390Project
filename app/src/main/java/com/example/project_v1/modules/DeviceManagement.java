@@ -125,7 +125,7 @@ Fauth = FirebaseAuth.getInstance();
                                                 FirebaseAuth mAuth;
                                                 mAuth=FirebaseAuth.getInstance();
 
-                                                Toast.makeText(getApplicationContext(),userUID +"\n"+ mAuth.getCurrentUser().getUid().toString(),Toast.LENGTH_SHORT).show();
+
 
                                                 if(mAuth.getCurrentUser()!=null && userUID.equals(mAuth.getCurrentUser().getUid())){
                                                     Boolean gg=false;

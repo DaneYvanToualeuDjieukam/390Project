@@ -67,6 +67,7 @@ public class Settings extends AppCompatActivity {
         Button resetEmailButton;
         Button resetPasswordButton;
         Button signOutButton;
+        Button deleteAcc;
 
 
 
@@ -79,7 +80,7 @@ public class Settings extends AppCompatActivity {
         resetEmailButton= findViewById(R.id.resetEmailButton);
         resetPasswordButton = findViewById(R.id.resetPasswordButton);
         signOutButton = findViewById(R.id.signOutButton);
-
+        deleteAcc = findViewById(R.id.deleteAccountButton);
 
 
 
@@ -255,8 +256,31 @@ passwordResetDialog.create().show();
             public void onClick(View view) {
 
                 stopService();
-                mAuth.signOut();
+           /*     mAuth.getCurrentUser().delete();*/
+               mAuth.signOut();
                 database.goOffline();
+
+
+                Intent signout = new Intent(getApplicationContext(),MainActivity.class);
+                startActivity(signout);
+
+            }
+        });
+
+
+        deleteAcc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+
+                stopService();
+
+                /*mDatabase.child(userUID).setValue(null);*/
+
+                mAuth.getCurrentUser().delete();
+                database.goOffline();
+
 
                 Intent signout = new Intent(getApplicationContext(),MainActivity.class);
                 startActivity(signout);

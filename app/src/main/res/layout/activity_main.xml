@@ -22,8 +22,11 @@
         android:id="@+id/signinButton"
         android:layout_width="140dp"
         android:layout_height="50dp"
+        android:layout_alignBottom="@+id/registerButtonnn"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="425dp"
+        android:layout_marginTop="455dp"
+        android:layout_marginBottom="65dp"
+        android:background="#00FF0D"
         android:text="Sign In" />
 
     <EditText
@@ -31,25 +34,29 @@
         android:layout_width="251dp"
         android:layout_height="51dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="300dp"
+        android:layout_marginTop="330dp"
         android:hint="Email"
         android:inputType="textPersonName" />
 
     <EditText
         android:id="@+id/passwordTextView"
         android:layout_width="251dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="360dp"
         android:layout_height="51dp"
+        android:layout_alignBottom="@+id/signinButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="390dp"
+        android:layout_marginBottom="64dp"
         android:hint="Password"
         android:inputType="textPassword" />
 
     <Button
         android:id="@+id/registerButtonnn"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="490dp"
         android:layout_width="140dp"
         android:layout_height="50dp"
+        android:layout_alignTop="@+id/emailTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="190dp"
+        android:background="#179BF3"
         android:text="Register" />
 
 </RelativeLayout>

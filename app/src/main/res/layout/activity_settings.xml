@@ -68,10 +68,26 @@
         android:id="@+id/signOutButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/resetPasswordButton"
         android:layout_alignParentEnd="true"
+        android:layout_marginTop="177dp"
         android:layout_marginRight="20dp"
-        android:layout_marginTop="400dp"
+        android:background="#FFF200"
         android:text="Sign Out" />
+
+    <Button
+        android:id="@+id/deleteAccountButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/resetPasswordButton"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="177dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@android:color/holo_red_dark"
+        android:text="DELETE ACCOUNT" />
 
 
 </RelativeLayout>
