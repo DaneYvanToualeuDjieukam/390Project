@@ -104,7 +104,7 @@ public class Register1 extends AppCompatActivity {
 
 
                                 user=mAuth.getCurrentUser();
-                                Task<Void> verification_email_sent = user.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
+                              user.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
                                         Toast.makeText(Register1.this, "Verification Email Sent", Toast.LENGTH_SHORT).show();
