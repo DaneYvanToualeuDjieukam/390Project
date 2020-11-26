@@ -30,6 +30,7 @@ import com.example.project_v1.dialogs.delete_device;
 import com.example.project_v1.models.Device;
 import com.example.project_v1.models.ViewHolder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -108,6 +109,13 @@ String userUID;
 
                                             @Override
                                             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                                                FirebaseAuth mAuth;
+                                                mAuth=FirebaseAuth.getInstance();
+
+                                                Toast.makeText(getApplicationContext(),userUID +"\n"+ mAuth.getCurrentUser().getUid().toString(),Toast.LENGTH_SHORT).show();
+
+                                                if(mAuth.getCurrentUser()!=null && userUID.equals(mAuth.getCurrentUser().getUid())){
                                                     Boolean gg=false;
 
                                                 String change =snapshot.getRef().getKey().toString();   //GETS NAME OF DEVICE INFO CHANGED
@@ -132,7 +140,7 @@ if(gg==true){
 
 
 
-                                            }
+                                            }}
 
                                             @Override
                                             public void onChildRemoved(@NonNull DataSnapshot snapshot) {

@@ -256,6 +256,7 @@ passwordResetDialog.create().show();
 
                 stopService();
                 mAuth.signOut();
+                database.goOffline();
 
                 Intent signout = new Intent(getApplicationContext(),MainActivity.class);
                 startActivity(signout);
