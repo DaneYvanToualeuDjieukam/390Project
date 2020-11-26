@@ -317,12 +317,15 @@ managerCompat.notify(999,builder.build());
 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists())   //Allows user to add new device if she signs out and back in (only 1)
                 if(!skip_unwanted_onDataChangeListener){
+
                         int counter = 0; //the order in the deviceList is the same as in the firebase/database
                         //loop through all devices as there is no way to determine which one was changed
                         for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
                             //get the current status in database
                             String dummy_state = userSnapshot.child("Status").getValue(String.class);
+
                             deviceList.get(counter).setStatus(dummy_state);
                             ++counter;
                         }

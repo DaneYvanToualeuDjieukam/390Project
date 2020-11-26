@@ -91,6 +91,7 @@ public class Settings extends AppCompatActivity {
 reference.addValueEventListener(new ValueEventListener() {
     @Override
     public void onDataChange(@NonNull DataSnapshot snapshot) {
+        if(snapshot.exists())
         username.setText(snapshot.getValue().toString());
     }
 
@@ -105,6 +106,8 @@ reference.addValueEventListener(new ValueEventListener() {
         referencee.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                if (snapshot.exists())
                 emailAddress.setText(snapshot.getValue().toString());
             }
 
@@ -292,8 +295,10 @@ passwordResetDialog.create().show();
                         stopService();
 
 
-
+                        mDatabase.child(userUID).setValue(null);
                         mAuth.getCurrentUser().delete();
+
+
                         database.goOffline();
 
                         Toast.makeText(Settings.this,"Account Deleted",Toast.LENGTH_LONG).show();
