@@ -12,21 +12,30 @@
         android:layout_width="114dp"
         android:layout_height="wrap_content"
 
+        android:layout_below="@+id/deviceListView"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginStart="20dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="500dp"
+        android:layout_marginTop="28dp"
         android:layout_marginBottom="0dp"
         android:text="Settings" />
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton"
         android:layout_width="150dp"
         android:layout_height="150dp"
+        android:layout_below="@+id/deviceListView"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
         android:layout_marginLeft="280dp"
-        android:layout_marginTop="490dp"
+        android:layout_marginTop="19dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginRight="28dp"
         android:clickable="true"
         android:focusable="true"
         app:srcCompat="@android:drawable/ic_input_add" />
-
 
     <ListView
         android:id="@+id/deviceListView"
