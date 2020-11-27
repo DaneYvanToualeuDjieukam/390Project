@@ -44,7 +44,7 @@ public class DeviceManagement extends AppCompatActivity {
 
     Button settingsButton;
     protected ListView devicesListView;                         //main listView
-    private List<Device> deviceList;                           //contains all devices form a user
+    private static List<Device> deviceList;                           //contains all devices form a user // needs to be static so that user can sign out and come back in and add device
     protected FloatingActionButton addDeviceFloatingButton;     //add a device
     private FirebaseDatabase database;                          //All database data
     private DatabaseReference mDatabase;//user's info (name, email, password and devices)
