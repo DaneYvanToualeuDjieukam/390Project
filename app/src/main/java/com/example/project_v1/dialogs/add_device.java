@@ -17,11 +17,16 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class add_device extends AppCompatDialogFragment {
     protected EditText deviceName;
+    protected EditText devicePassword;
+    protected EditText deviceID;
     private static final String USER = "user";
     private String userID;
     private String userEmail;
     private DatabaseHelper dataBaseHelper;
     String input_DeviceName = null;
+    String input_DevicePassword=null;
+    String input_DeviceID=null;
+
 
     //Default constructor
     public add_device() {
@@ -41,6 +46,8 @@ public class add_device extends AppCompatDialogFragment {
 
         //fragment_insert_device object links
         deviceName = view.findViewById(R.id.deviceNameEditText);
+        devicePassword = view.findViewById(R.id.devicePasswordEditText);
+        deviceID= view.findViewById(R.id.deviceIDEditText);
 
         builder.setView(view)
                 .setTitle("ADD DEVICES")
@@ -55,11 +62,17 @@ public class add_device extends AppCompatDialogFragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         input_DeviceName = deviceName.getText().toString();
+                        input_DevicePassword=devicePassword.getText().toString();
+                        input_DeviceID=deviceID.getText().toString();
                         add_Device_If_Applicable(input_DeviceName);
                     }
                 });
         return builder.create();
     }
+
+
+
+
 
     //is the device's name already in the database?
     private void add_Device_If_Applicable(final String device_name) {

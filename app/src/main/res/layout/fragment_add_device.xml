@@ -18,7 +18,32 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.373" />
+        app:layout_constraintTop_toTopOf="parent" />
 
+    <EditText
+        android:id="@+id/devicePasswordEditText"
+        android:layout_width="212dp"
+        android:layout_height="50dp"
+
+        android:gravity="center"
+        android:hint="Device Password"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/deviceNameEditText"
+        app:layout_constraintVertical_bias="0.728" />
+
+    <EditText
+        android:id="@+id/deviceIDEditText"
+        android:layout_width="212dp"
+        android:layout_height="50dp"
+
+        android:gravity="center"
+        android:hint="Device ID"
+        android:inputType="textPersonName"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="7dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
