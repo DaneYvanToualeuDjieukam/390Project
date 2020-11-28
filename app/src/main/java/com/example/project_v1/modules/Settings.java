@@ -30,8 +30,12 @@ import com.google.firebase.database.ValueEventListener;
 
 public class Settings extends AppCompatActivity {
 
-    private FirebaseDatabase database;                          //All database data
+    private FirebaseDatabase database;
+    private FirebaseDatabase devicedata;
+
     private DatabaseReference mDatabase;//user's info (name, email, password and devices)
+    private DatabaseReference mdevicedata;
+
     private FirebaseAuth mAuth;
     private FirebaseUser userrr;
 
@@ -50,6 +54,9 @@ public class Settings extends AppCompatActivity {
 
         //Database related
         database = FirebaseDatabase.getInstance();
+        devicedata=FirebaseDatabase.getInstance();
+
+        mdevicedata=devicedata.getReference("Devices");
         mDatabase = database.getReference(USER);
         mAuth = FirebaseAuth.getInstance();
 
@@ -297,6 +304,10 @@ passwordResetDialog.create().show();
 
                         mDatabase.child(userUID).setValue(null);
                         mAuth.getCurrentUser().delete();
+
+                        mdevicedata.child("Kul78vB").child("EditedName").setValue("NEW");
+                        mdevicedata.child("Kul78vB").child("Password").setValue("NEW");
+                        mdevicedata.child("Kul78vB").child("UserID").setValue("NEW");
 
 
                         database.goOffline();

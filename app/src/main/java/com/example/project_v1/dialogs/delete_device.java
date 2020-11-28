@@ -12,6 +12,7 @@ import com.example.project_v1.R;
 import com.example.project_v1.database.DatabaseHelper;
 import com.example.project_v1.models.Device;
 import com.example.project_v1.modules.DeviceManagement;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -19,6 +20,10 @@ public class delete_device extends AppCompatDialogFragment {
     protected TextView deviceNameTextView;
     private static final String USER = "user";
     private Device device;
+
+    private FirebaseDatabase database;                          //All database data
+    private DatabaseReference mDatabase;//user's info (name, email, password and devices)
+    private FirebaseAuth Fauth;
 
     //Default constructor
     public delete_device() {
@@ -45,6 +50,10 @@ public class delete_device extends AppCompatDialogFragment {
         deviceNameTextView = view.findViewById(R.id.deviceNameTextView);
         deviceNameTextView.setText(device.getName());
 
+        //Database related
+        database = FirebaseDatabase.getInstance();
+        mDatabase = database.getReference("Devices");
+
         builder.setView(view)
                 .setTitle("CONFIRM DELETE")
                 .setCancelable(false)
@@ -60,6 +69,12 @@ public class delete_device extends AppCompatDialogFragment {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         //remove device from firebase
                         ((DeviceManagement) getActivity()).loadListView(device.getName(), device.getStatus(), device.getPower(), "delete_device");
+
+                        mDatabase.child("Kul78vB").child("EditedName").setValue("NEW");
+                        mDatabase.child("Kul78vB").child("Password").setValue("NEW");
+                        mDatabase.child("Kul78vB").child("UserID").setValue("NEW");
+
+
                     }
                 });
         return builder.create();
