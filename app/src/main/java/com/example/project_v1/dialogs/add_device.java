@@ -2,18 +2,25 @@ package com.example.project_v1.dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import com.example.project_v1.R;
 import com.example.project_v1.database.DatabaseHelper;
 import com.example.project_v1.modules.DeviceManagement;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class add_device extends AppCompatDialogFragment {
     protected EditText deviceName;
@@ -23,6 +30,11 @@ public class add_device extends AppCompatDialogFragment {
     private String userID;
     private String userEmail;
     private DatabaseHelper dataBaseHelper;
+
+    private FirebaseDatabase database;                          //All database data
+    private DatabaseReference mDatabase;//user's info (name, email, password and devices)
+    private FirebaseAuth Fauth;
+
     String input_DeviceName = null;
     String input_DevicePassword=null;
     String input_DeviceID=null;
@@ -49,22 +61,71 @@ public class add_device extends AppCompatDialogFragment {
         devicePassword = view.findViewById(R.id.devicePasswordEditText);
         deviceID= view.findViewById(R.id.deviceIDEditText);
 
+        Fauth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+        mDatabase = database.getReference("Devices");
+
         builder.setView(view)
                 .setTitle("ADD DEVICES")
                 .setCancelable(false)
                 .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        //nothing happens
+
+
                     }
                 })
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+
+
                         input_DeviceName = deviceName.getText().toString();
                         input_DevicePassword=devicePassword.getText().toString();
                         input_DeviceID=deviceID.getText().toString();
-                        add_Device_If_Applicable(input_DeviceName);
+
+
+
+boolean k=false;
+DatabaseReference ref =mDatabase;
+ref.addListenerForSingleValueEvent(new ValueEventListener() {
+    @Override
+    public void onDataChange(@NonNull DataSnapshot snapshot) {
+        if(snapshot.hasChild(input_DeviceID)){
+
+
+
+
+            if(snapshot.child(input_DeviceID).child("EditedName").getValue().equals("NEW")){
+    mDatabase.child(input_DeviceID).child("EditedName").setValue(input_DeviceName);
+    mDatabase.child(input_DeviceID).child("Password").setValue(input_DevicePassword);
+    mDatabase.child(input_DeviceID).child("UserID").setValue(Fauth.getUid());
+
+    callfunc(input_DeviceName);
+
+}
+
+
+        }
+    }
+
+
+
+
+
+    @Override
+    public void onCancelled(@NonNull DatabaseError error) {
+
+    }
+});
+
+
+
+
+
+
+
+
                     }
                 });
         return builder.create();
@@ -93,5 +154,13 @@ public class add_device extends AppCompatDialogFragment {
         else {
             Toast.makeText(getActivity(), "Enter a valid name", Toast.LENGTH_SHORT).show();
         }
+    }
+
+
+
+    private void callfunc(String name){
+        add_Device_If_Applicable(name);
+
+
     }
 }
