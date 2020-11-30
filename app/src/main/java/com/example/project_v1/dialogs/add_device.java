@@ -2,9 +2,13 @@ package com.example.project_v1.dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -12,8 +16,12 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDialogFragment;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
 import com.example.project_v1.R;
 import com.example.project_v1.database.DatabaseHelper;
+import com.example.project_v1.modules.DeviceManagement;
 import com.example.project_v1.modules.DeviceManagement;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -34,6 +42,8 @@ public class add_device extends AppCompatDialogFragment {
     private FirebaseDatabase database;                          //All database data
     private DatabaseReference mDatabase;//user's info (name, email, password and devices)
     private FirebaseAuth Fauth;
+
+
 
     String input_DeviceName = null;
     String input_DevicePassword=null;
@@ -100,8 +110,12 @@ ref.addListenerForSingleValueEvent(new ValueEventListener() {
     mDatabase.child(input_DeviceID).child("EditedName").setValue(input_DeviceName);
     mDatabase.child(input_DeviceID).child("Password").setValue(input_DevicePassword);
     mDatabase.child(input_DeviceID).child("UserID").setValue(Fauth.getUid());
+                mDatabase.child(input_DeviceID).child("Time").setValue("0");
 
-    callfunc(input_DeviceName);
+                ((DeviceManagement) getActivity()).startRepeating();
+
+
+   /* callfunc(input_DeviceName);*/
 
 }
 
@@ -163,4 +177,7 @@ ref.addListenerForSingleValueEvent(new ValueEventListener() {
 
 
     }
+
+
+
 }

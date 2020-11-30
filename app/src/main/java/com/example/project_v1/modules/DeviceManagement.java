@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.PowerManager;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,8 @@ import java.util.List;
 
 public class DeviceManagement extends AppCompatActivity {
 
+    private Handler mHandler = new Handler();
+
     Button settingsButton;
     protected ListView devicesListView;                         //main listView
     private static List<Device> deviceList;                           //contains all devices form a user // needs to be static so that user can sign out and come back in and add device
@@ -55,12 +58,15 @@ public class DeviceManagement extends AppCompatActivity {
     private boolean skip_unwanted_onDataChangeListener; //as the name says  "see function set_The_Listeners
     final myAdapter arrayAdapter = new myAdapter();
     protected List<ViewHolder> viewHolderList;
+
+    public Context con;
 String userUID;
 
 
     @Override
     protected void onResume() {
         super.onResume();
+
         userID = Fauth.getUid();
         userUID=userID;
 
@@ -303,6 +309,7 @@ managerCompat.notify(999,builder.build());
                 Context Context = v.getContext();
                 add_device dialog = new add_device();
                 dialog.show(getSupportFragmentManager(), "InsertDeviceFragment");    //open the dialog
+
             }
         });
 
@@ -579,4 +586,103 @@ managerCompat.notify(999,builder.build());
         }
 
     }
+
+
+
+
+
+
+
+
+
+    protected void notificationDeviceFailed(){
+
+
+
+
+        PowerManager pm = (PowerManager) getApplication().getBaseContext().getSystemService(Context.POWER_SERVICE);
+        boolean isScreenOn = Build.VERSION.SDK_INT >= 20 ? pm.isInteractive() : pm.isScreenOn(); // check if screen is on
+
+        if (!isScreenOn) {
+
+            if (!isScreenOn) {
+                PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "myApp:notificationLock");
+                wl.acquire(3000); //set your time in milliseconds
+            }
+
+
+
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            {
+                NotificationChannel channel = new NotificationChannel("n","n", NotificationManager.IMPORTANCE_DEFAULT);
+
+                NotificationManager manager = getSystemService(NotificationManager.class);
+                manager.createNotificationChannel(channel);
+            }
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this,"n")
+
+                    .setContentTitle("Fire Detection System")
+                    .setContentText("Device Connection Failed")
+                    .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+            NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
+            managerCompat.notify(999,builder.build());
+
+
+        }
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+        {
+            NotificationChannel channel = new NotificationChannel("n","n", NotificationManager.IMPORTANCE_DEFAULT);
+
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this,"n")
+
+                .setContentTitle("Fire Detection System")
+                .setContentText("Device Connection Failed")
+                .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
+        managerCompat.notify(999,builder.build());
+
+    }
+
+
+
+
+
+
+
+
+
+    public void startRepeating(){
+        mHandler.postDelayed(mNotificationRunnable,10000);
+
+        /*mNotificationRunnable.run();*/
+    }
+    public void stopRepeating(){}
+
+    public Runnable mNotificationRunnable = new Runnable() {
+        @Override
+        public void run() {
+
+
+
+
+
+
+            mHandler.postDelayed(this,10000);
+        }
+    };
+
+
+
+
+
 }
