@@ -44,6 +44,7 @@ import java.util.List;
 public class DeviceManagement extends AppCompatActivity {
 
     private Handler mHandler = new Handler();
+    private static Integer timestamp=0;
 
     Button settingsButton;
     protected ListView devicesListView;                         //main listView
@@ -671,6 +672,29 @@ managerCompat.notify(999,builder.build());
     public Runnable mNotificationRunnable = new Runnable() {
         @Override
         public void run() {
+
+            mDatabase = database.getReference("Devices");
+            DatabaseReference reference=mDatabase;
+
+            reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.hasChild("Kul78vB")){
+
+                       String c = snapshot.child("Kul78vB").child("Time").getValue().toString();
+                       Integer k= Integer.parseInt(c);
+
+                       if(k<=timestamp){notificationDeviceFailed(); Toast.makeText(getApplicationContext(),"Good",Toast.LENGTH_SHORT).show();   }
+                       else{timestamp=k;  Toast.makeText(getApplicationContext(),"Bad",Toast.LENGTH_SHORT).show();  }
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
 
 
 
