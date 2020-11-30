@@ -42,13 +42,16 @@ public class add_device extends AppCompatDialogFragment {
     private FirebaseDatabase database;                          //All database data
     private DatabaseReference mDatabase;//user's info (name, email, password and devices)
     private FirebaseAuth Fauth;
-
+private Context context;
 
 
     String input_DeviceName = null;
     String input_DevicePassword=null;
     String input_DeviceID=null;
 
+    public add_device(Context context) {
+        this.context = context;
+    }
 
     //Default constructor
     public add_device() {
@@ -117,10 +120,11 @@ ref.addListenerForSingleValueEvent(new ValueEventListener() {
 
    /* callfunc(input_DeviceName);*/
 
-}
+}else{Toast.makeText(context,"Device ALREADY IN Use",Toast.LENGTH_SHORT).show(); }
 
 
-        }
+        }else{
+            Toast.makeText(context,"Device Not Available",Toast.LENGTH_SHORT).show();}
     }
 
 

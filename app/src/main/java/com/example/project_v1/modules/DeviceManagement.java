@@ -308,7 +308,7 @@ managerCompat.notify(999,builder.build());
             @Override
             public void onClick(View v) {
                 Context Context = v.getContext();
-                add_device dialog = new add_device();
+                add_device dialog = new add_device(v.getContext());
                 dialog.show(getSupportFragmentManager(), "InsertDeviceFragment");    //open the dialog
 
             }
@@ -680,7 +680,7 @@ managerCompat.notify(999,builder.build());
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if (snapshot.hasChild("Kul78vB")){
-
+//IF arduino sends integer, than change c to a integer.
                        String c = snapshot.child("Kul78vB").child("Time").getValue().toString();
                        Integer k= Integer.parseInt(c);
 
