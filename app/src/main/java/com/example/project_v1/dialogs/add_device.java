@@ -1,5 +1,6 @@
 package com.example.project_v1.dialogs;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.NotificationChannel;
@@ -44,6 +45,8 @@ public class add_device extends AppCompatDialogFragment {
     private FirebaseAuth Fauth;
 private Context context;
 
+Activity activity ;
+
 
     String input_DeviceName = null;
     String input_DevicePassword=null;
@@ -64,6 +67,8 @@ private Context context;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+     activity =((DeviceManagement) getActivity());
         //set the Layout object size
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -115,7 +120,7 @@ ref.addListenerForSingleValueEvent(new ValueEventListener() {
     mDatabase.child(input_DeviceID).child("UserID").setValue(Fauth.getUid());
                 mDatabase.child(input_DeviceID).child("Time").setValue("0");
 
-                ((DeviceManagement) getActivity()).startRepeating();
+                ((DeviceManagement) activity).startRepeating();
 
 
    /* callfunc(input_DeviceName);*/

@@ -63,10 +63,14 @@ public class DeviceManagement extends AppCompatActivity {
     public Context con;
 String userUID;
 
+    public DeviceManagement() {
+        super();
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
+
 
         userID = Fauth.getUid();
         userUID=userID;
@@ -662,7 +666,8 @@ managerCompat.notify(999,builder.build());
 
 
 
-    public void startRepeating(){
+     public void startRepeating(){
+        getApplicationContext();
         mHandler.postDelayed(mNotificationRunnable,10000);
 
         /*mNotificationRunnable.run();*/

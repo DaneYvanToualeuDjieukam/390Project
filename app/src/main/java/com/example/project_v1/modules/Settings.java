@@ -310,9 +310,7 @@ passwordResetDialog.create().show();
                         mdevicedata.child("Kul78vB").child("UserID").setValue("NEW");
 
 
-                        DeviceManagement hand =new DeviceManagement();
 
-                     hand.stopRepeating();
 
                         database.goOffline();
 
