@@ -169,7 +169,7 @@ ref.addListenerForSingleValueEvent(new ValueEventListener() {
             if (dataBaseHelper.is_The_Device_Name_Available(device_name)) {
                 //Send the device to Load view to be added
 
-
+                //need to use the activity which i save right away fragement called because after a while the fragement detaches from activity
                 ((DeviceManagement) activity).loadListView(device_name, "OFF", "YES", "add_device");
             }
             else {
