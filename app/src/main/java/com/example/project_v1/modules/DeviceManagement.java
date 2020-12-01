@@ -667,19 +667,30 @@ managerCompat.notify(999,builder.build());
 
         /*mNotificationRunnable.run();*/
     }
-    public void stopRepeating(){}
+    public void stopRepeating(){
+        mHandler.removeCallbacks(mNotificationRunnable);
+    }
 
     public Runnable mNotificationRunnable = new Runnable() {
         @Override
         public void run() {
 
+
+
             mDatabase = database.getReference("Devices");
             DatabaseReference reference=mDatabase;
+
+
 
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+
+
+
                     if (snapshot.hasChild("Kul78vB")){
+                        if(Fauth.getUid().equals(snapshot.child("Kul78vB").child("UserID").getValue().toString()) ){
 //IF arduino sends integer, than change c to a integer.
                        String c = snapshot.child("Kul78vB").child("Time").getValue().toString();
                        Integer k= Integer.parseInt(c);
@@ -688,7 +699,7 @@ managerCompat.notify(999,builder.build());
                        else{timestamp=k;  Toast.makeText(getApplicationContext(),"Bad",Toast.LENGTH_SHORT).show();  }
 
                     }
-                }
+                }}
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
