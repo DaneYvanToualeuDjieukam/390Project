@@ -31,6 +31,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + Config.COLUMN_DEVICE_POWER + " TEXT NOT NULL, "
             + Config.COLUMN_DEVICE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT)";
 
+    SQLiteDatabase dbb = this.getWritableDatabase();
+
+
     public  DatabaseHelper (Context context) {
         super(context, Config.DATABASE_NAME,null,Config.DATABASE_VERSION);
         this.context=context;
@@ -87,7 +90,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public void editDeviceName(String device_name) {
         //access the data base
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = dbb;
         ContentValues values = new ContentValues();
 
         values.put( Config.COLUMN_DEVICE_NAME ,device_name);
