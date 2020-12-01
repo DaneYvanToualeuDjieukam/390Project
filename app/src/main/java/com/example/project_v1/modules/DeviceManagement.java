@@ -668,7 +668,7 @@ managerCompat.notify(999,builder.build());
 
      public void startRepeating(){
         getApplicationContext();
-        mHandler.postDelayed(mNotificationRunnable,10000);
+        mHandler.postDelayed(mNotificationRunnable,150000);
 
         /*mNotificationRunnable.run();*/
     }
@@ -700,8 +700,8 @@ managerCompat.notify(999,builder.build());
                        String c = snapshot.child("Kul78vB").child("Time").getValue().toString();
                        Integer k= Integer.parseInt(c);
 
-                       if(k<=timestamp){notificationDeviceFailed(); Toast.makeText(getApplicationContext(),"Good",Toast.LENGTH_SHORT).show();   }
-                       else{timestamp=k;  Toast.makeText(getApplicationContext(),"Bad",Toast.LENGTH_SHORT).show();  }
+                       if(k<=timestamp){notificationDeviceFailed(); /*Toast.makeText(getApplicationContext(),"Good",Toast.LENGTH_SHORT).show();*/   }
+                       else{timestamp=k;  /*Toast.makeText(getApplicationContext(),"Bad",Toast.LENGTH_SHORT).show(); */ }
 
                     }
                 }}
@@ -717,7 +717,7 @@ managerCompat.notify(999,builder.build());
 
 
 
-            mHandler.postDelayed(this,10000);
+            mHandler.postDelayed(this,120000);
         }
     };
 
