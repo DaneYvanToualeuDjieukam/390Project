@@ -31,7 +31,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + Config.COLUMN_DEVICE_POWER + " TEXT NOT NULL, "
             + Config.COLUMN_DEVICE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT)";
 
-    SQLiteDatabase dbb = this.getWritableDatabase();
+    SQLiteDatabase dbb;
 
 
     public  DatabaseHelper (Context context) {
@@ -42,6 +42,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(CREATE_TABLE_DEVICE);        //create the Table Device
+        dbb=  this.getWritableDatabase();
     }
 
     @Override
@@ -171,7 +172,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * Return true if the device name is available
      */
     public boolean is_The_Device_Name_Available(String device_Name){
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = dbb;
         Device device = new Device();
         boolean available = false;
         Cursor cursor = null;
@@ -199,7 +200,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         {
             if(cursor != null)
                 cursor.close();
-            db.close();
+            /*db.close();*/
         }
 
         return available;
