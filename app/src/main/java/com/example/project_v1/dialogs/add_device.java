@@ -123,7 +123,7 @@ ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 ((DeviceManagement) activity).startRepeating();
 
 
-   /* callfunc(input_DeviceName);*/
+                add_Device_If_Applicable(input_DeviceName);
 
 }else{Toast.makeText(context,"Device ALREADY IN Use",Toast.LENGTH_SHORT).show(); }
 
@@ -168,24 +168,21 @@ ref.addListenerForSingleValueEvent(new ValueEventListener() {
             //if the device name is available
             if (dataBaseHelper.is_The_Device_Name_Available(device_name)) {
                 //Send the device to Load view to be added
-                ((DeviceManagement) getActivity()).loadListView(device_name, "OFF", "YES", "add_device");
+
+
+                ((DeviceManagement) activity).loadListView(device_name, "OFF", "YES", "add_device");
             }
             else {
-                Toast.makeText(getActivity(), "The device name is not available", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "The device name is not available", Toast.LENGTH_SHORT).show();
             }
         }
         else {
-            Toast.makeText(getActivity(), "Enter a valid name", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Enter a valid name", Toast.LENGTH_SHORT).show();
         }
     }
 
 
 
-    private void callfunc(String name){
-        add_Device_If_Applicable(name);
-
-
-    }
 
 
 
