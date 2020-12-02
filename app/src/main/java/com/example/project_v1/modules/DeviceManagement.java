@@ -44,7 +44,7 @@ import java.util.List;
 public class DeviceManagement extends AppCompatActivity {
 
     private Handler mHandler = new Handler();
-    private static Integer timestamp=0;
+    private static Integer timestamp=1;
 
     Button settingsButton;
     protected ListView devicesListView;                         //main listView
@@ -52,6 +52,11 @@ public class DeviceManagement extends AppCompatActivity {
     protected FloatingActionButton addDeviceFloatingButton;     //add a device
     private FirebaseDatabase database;                          //All database data
     private DatabaseReference mDatabase;//user's info (name, email, password and devices)
+
+    private FirebaseDatabase adatabase;                          //All database data
+    private DatabaseReference amDatabase;//user's info (name, email, password and devices)
+
+
     private FirebaseAuth Fauth;
     private static final String USER = "user";
     private static   String userID;
@@ -94,6 +99,9 @@ Fauth = FirebaseAuth.getInstance();
         //Database related
         database = FirebaseDatabase.getInstance();
         mDatabase = database.getReference(USER);
+
+        adatabase = FirebaseDatabase.getInstance();
+        amDatabase = database.getReference("Devices");
 
         devicesListView = findViewById(R.id.deviceListView);
         addDeviceFloatingButton= findViewById(R.id.floatingActionButton);
@@ -523,9 +531,11 @@ managerCompat.notify(999,builder.build());
                         if (sb.isChecked()) {
                             skip_unwanted_onDataChangeListener = true;
                             update_device_states((Integer) buttonView.getTag(), "ON", "ON");
+                            mDatabase.child(userUID).child("Device").child(deviceList.get((Integer) buttonView.getTag()).getName()).child("ring_state").setValue("OFF");
                         } else {
                             skip_unwanted_onDataChangeListener = true;
                             update_device_states((Integer) buttonView.getTag(), "OFF", "ON");
+                            mDatabase.child(userUID).child("Device").child(deviceList.get((Integer) buttonView.getTag()).getName()).child("ring_state").setValue("ON");
                         }
                     }
                 }
@@ -669,7 +679,6 @@ managerCompat.notify(999,builder.build());
      public void startRepeating(){
         getApplicationContext();
         mHandler.postDelayed(mNotificationRunnable,150000);
-
         /*mNotificationRunnable.run();*/
     }
     public void stopRepeating(){
@@ -700,8 +709,8 @@ managerCompat.notify(999,builder.build());
                        String c = snapshot.child("Kul78vB").child("Time").getValue().toString();
                        Integer k= Integer.parseInt(c);
 
-                       if(k<=timestamp){notificationDeviceFailed(); /*Toast.makeText(getApplicationContext(),"Good",Toast.LENGTH_SHORT).show();*/   }
-                       else{timestamp=k;  /*Toast.makeText(getApplicationContext(),"Bad",Toast.LENGTH_SHORT).show(); */ }
+                       if(k!=timestamp){notificationDeviceFailed(); /*Toast.makeText(getApplicationContext(),"Good",Toast.LENGTH_SHORT).show();*/   }
+                       else{amDatabase.child("Kul78vB").child("Time").setValue("0");  /*Toast.makeText(getApplicationContext(),"Bad",Toast.LENGTH_SHORT).show(); */ }
 
                     }
                 }}

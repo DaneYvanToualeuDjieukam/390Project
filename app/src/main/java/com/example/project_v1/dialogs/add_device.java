@@ -120,6 +120,8 @@ ref.addListenerForSingleValueEvent(new ValueEventListener() {
     mDatabase.child(input_DeviceID).child("UserID").setValue(Fauth.getUid());
                 mDatabase.child(input_DeviceID).child("Time").setValue("0");
 
+
+
                 ((DeviceManagement) activity).startRepeating();
 
 
