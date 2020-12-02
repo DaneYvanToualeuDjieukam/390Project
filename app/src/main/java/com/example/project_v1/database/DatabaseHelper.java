@@ -19,6 +19,7 @@ import static com.example.project_v1.database.Config.COLUMN_DEVICE_ID;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
+    private static SQLiteDatabase dbb;
     private Context context;
     private static final String TAG = "DatabaseHelper";
     private FirebaseDatabase database;
@@ -31,7 +32,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + Config.COLUMN_DEVICE_POWER + " TEXT NOT NULL, "
             + Config.COLUMN_DEVICE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT)";
 
-    SQLiteDatabase dbb;
 
 
     public  DatabaseHelper (Context context) {
@@ -42,7 +42,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(CREATE_TABLE_DEVICE);        //create the Table Device
-        dbb=  this.getWritableDatabase();
+
+        dbb=getReadableDatabase();
+
     }
 
     @Override
@@ -57,7 +59,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public void addDevice(Device device) {
         //access the data base
+
         SQLiteDatabase db = this.getWritableDatabase();
+
 
         //put the values in Course Table
         ContentValues values = new ContentValues();
@@ -91,7 +95,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public void editDeviceName(String device_name) {
         //access the data base
-        SQLiteDatabase db = dbb;
+    SQLiteDatabase db=dbb;
         ContentValues values = new ContentValues();
 
         values.put( Config.COLUMN_DEVICE_NAME ,device_name);
@@ -105,7 +109,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public void update_Device_Status(String device_name, String device_state) {
         //access the data base
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = dbb;
         ContentValues values = new ContentValues();
 
         values.put( Config.COLUMN_DEVICE_STATE ,device_state);
@@ -119,7 +123,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public void update_Device_Power(String device_name, String device_power) {
         //access the data base
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = dbb;
         ContentValues values = new ContentValues();
 
         values.put( Config.COLUMN_DEVICE_STATE ,device_power);
@@ -132,7 +136,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * Return the user's devices info
      */
     public List<Device> getAllDevices(){
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db =dbb;
         List <Device> deviceList =new ArrayList<>();
         Cursor cursor = null;
 
@@ -172,7 +176,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * Return true if the device name is available
      */
     public boolean is_The_Device_Name_Available(String device_Name){
-        SQLiteDatabase db = dbb;
+
+         SQLiteDatabase db = dbb;
+
         Device device = new Device();
         boolean available = false;
         Cursor cursor = null;
@@ -200,7 +206,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         {
             if(cursor != null)
                 cursor.close();
-            /*db.close();*/
+            if(db!=null)
+            db.close();
         }
 
         return available;
