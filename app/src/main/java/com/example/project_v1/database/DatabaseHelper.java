@@ -43,7 +43,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(CREATE_TABLE_DEVICE);        //create the Table Device
 
-        dbb=getReadableDatabase();
+      /*  dbb=getReadableDatabase();*/
 
     }
 
@@ -95,7 +95,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public void editDeviceName(String device_name) {
         //access the data base
-    SQLiteDatabase db=dbb;
+    SQLiteDatabase db=this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put( Config.COLUMN_DEVICE_NAME ,device_name);
@@ -109,7 +109,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public void update_Device_Status(String device_name, String device_state) {
         //access the data base
-        SQLiteDatabase db = dbb;
+        SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put( Config.COLUMN_DEVICE_STATE ,device_state);
@@ -123,7 +123,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public void update_Device_Power(String device_name, String device_power) {
         //access the data base
-        SQLiteDatabase db = dbb;
+        SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put( Config.COLUMN_DEVICE_STATE ,device_power);
@@ -177,7 +177,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public boolean is_The_Device_Name_Available(String device_Name){
 
-         SQLiteDatabase db = dbb;
+         SQLiteDatabase db = getReadableDatabase();
 
         Device device = new Device();
         boolean available = false;
@@ -217,7 +217,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * Return the user's devices info
      */
     public Device getSingularDevices(int key_device){
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = this.getReadableDatabase();
         Device device = new Device();
         Cursor cursor = null;
 
