@@ -71,7 +71,7 @@ public class delete_device extends AppCompatDialogFragment {
                         ((DeviceManagement) getActivity()).loadListView(device.getName(), device.getStatus(), device.getPower(), "delete_device");
 
                         mDatabase.child("Kul78vB").child("EditedName").setValue("NEW");
-                        mDatabase.child("Kul78vB").child("Password").setValue("NEW");
+                        mDatabase.child("Kul78vB").child("Password").setValue("HUJ");
                         mDatabase.child("Kul78vB").child("UserID").setValue("NEW");
 
 

@@ -306,7 +306,7 @@ passwordResetDialog.create().show();
                         mAuth.getCurrentUser().delete();
 
                         mdevicedata.child("Kul78vB").child("EditedName").setValue("NEW");
-                        mdevicedata.child("Kul78vB").child("Password").setValue("NEW");
+                        mdevicedata.child("Kul78vB").child("Password").setValue("HUJ");
                         mdevicedata.child("Kul78vB").child("UserID").setValue("NEW");
 
 
