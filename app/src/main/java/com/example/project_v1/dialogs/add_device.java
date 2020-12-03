@@ -114,7 +114,8 @@ ref.addListenerForSingleValueEvent(new ValueEventListener() {
 
 
 
-            if(snapshot.child(input_DeviceID).child("EditedName").getValue().equals("NEW")){
+            if(snapshot.child(input_DeviceID).child("EditedName").getValue().equals("NEW")
+            && snapshot.child(input_DeviceID).child("Password").getValue().equals("HUJ")){
     mDatabase.child(input_DeviceID).child("EditedName").setValue(input_DeviceName);
     mDatabase.child(input_DeviceID).child("Password").setValue(input_DevicePassword);
     mDatabase.child(input_DeviceID).child("UserID").setValue(Fauth.getUid());

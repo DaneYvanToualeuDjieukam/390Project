@@ -26,7 +26,7 @@
         android:layout_height="50dp"
 
         android:gravity="center"
-        android:hint="Device Password"
+        android:hint="Password (Provided)"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
