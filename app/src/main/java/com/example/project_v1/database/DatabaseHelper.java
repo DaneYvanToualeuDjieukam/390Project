@@ -123,7 +123,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public void update_Device_Power(String device_name, String device_power) {
         //access the data base
-        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put( Config.COLUMN_DEVICE_STATE ,device_power);
@@ -136,7 +136,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * Return the user's devices info
      */
     public List<Device> getAllDevices(){
-        SQLiteDatabase db =dbb;
+        SQLiteDatabase db=this.getReadableDatabase() ;
         List <Device> deviceList =new ArrayList<>();
         Cursor cursor = null;
 
@@ -177,7 +177,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public boolean is_The_Device_Name_Available(String device_Name){
 
-         SQLiteDatabase db = getReadableDatabase();
+        SQLiteDatabase db = this.getReadableDatabase();
 
         Device device = new Device();
         boolean available = false;
