@@ -396,7 +396,7 @@ managerCompat.notify(999,builder.build());
                     //add the device name - and set the status as a child
                     skip_unwanted_onDataChangeListener = true;// deactivate the firebase, onDataChange listener
                     mDatabase.child(userID).child("numberOfDevices").setValue(Integer.toString(deviceList.size()));
-                    mDatabase.child(userID).child("Devices").child(dummyDevice.getName()).child("Power").setValue(dummyDevice.getStatus());
+                    mDatabase.child(userID).child("Devices").child(dummyDevice.getName()).child("Power").setValue(dummyDevice.getPower());
                     mDatabase.child(userID).child("Devices").child(dummyDevice.getName()).child("Status").setValue(dummyDevice.getStatus());
                 }
                 //Normal operation mode of the DeviceManagementActivity
