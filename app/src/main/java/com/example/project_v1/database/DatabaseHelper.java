@@ -63,7 +63,8 @@ public Context con;
     public void addDevice(Device device) {
         //access the data base
 
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db=dbb;
+        db=getWritableDatabase();
 
 
         //put the values in Course Table
@@ -84,7 +85,9 @@ public Context con;
         //Here whereClause is optional, passing null will delete all rows in table.
         //delete function will return number of affected row if whereClause passed otherwise will return 0.
         //see - https://abhiandroid.com/database/operation-sqlite.html
-        SQLiteDatabase db = this.getWritableDatabase();
+
+        SQLiteDatabase db=dbb;
+        db=getWritableDatabase();
         //or use teh following
         //db.delete(TABLE_COURSES, KEY_COURSE_ID + " = " + String.valueOf(key_course),
         //       new String[] { String.valueOf(key_course) });
@@ -98,7 +101,10 @@ public Context con;
      */
     public void editDeviceName(String device_name) {
         //access the data base
-    SQLiteDatabase db=this.getWritableDatabase();
+        SQLiteDatabase db=dbb;
+        db=getWritableDatabase();
+
+
         ContentValues values = new ContentValues();
 
         values.put( Config.COLUMN_DEVICE_NAME ,device_name);
@@ -112,7 +118,9 @@ public Context con;
      */
     public void update_Device_Status(String device_name, String device_state) {
         //access the data base
-        SQLiteDatabase db = this.getWritableDatabase();
+
+        SQLiteDatabase db=dbb;
+        db=getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put( Config.COLUMN_DEVICE_STATE ,device_state);
@@ -126,7 +134,8 @@ public Context con;
      */
     public void update_Device_Power(String device_name, String device_power) {
         //access the data base
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db=dbb;
+        db=getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put( Config.COLUMN_DEVICE_STATE ,device_power);
@@ -139,7 +148,8 @@ public Context con;
      * Return the user's devices info
      */
     public List<Device> getAllDevices(){
-        SQLiteDatabase db=this.getReadableDatabase() ;
+        SQLiteDatabase db=dbb;
+        db=getReadableDatabase();
         List <Device> deviceList =new ArrayList<>();
         Cursor cursor = null;
 
@@ -222,7 +232,8 @@ public Context con;
      * Return the user's devices info
      */
     public Device getSingularDevices(int key_device){
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db=dbb;
+        db=getReadableDatabase();
         Device device = new Device();
         Cursor cursor = null;
 
