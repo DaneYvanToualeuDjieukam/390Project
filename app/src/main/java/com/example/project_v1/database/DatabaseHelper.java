@@ -23,9 +23,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private Context context;
     private static final String TAG = "DatabaseHelper";
     private FirebaseDatabase database;
-
-    private static SQLiteDatabase db;
-
     private DatabaseReference mDatabase;
     private static final String USER = "user";
     private static final  String CREATE_TABLE_DEVICE = " CREATE TABLE IF NOT EXISTS "
@@ -197,8 +194,7 @@ sqLiteDatabase.close();
      */
     public boolean is_The_Device_Name_Available(String device_Name){
 
-        SQLiteDatabase db;
-                db=getReadableDatabase();
+             SQLiteDatabase   db=getReadableDatabase();
 
 
         Device device = new Device();
