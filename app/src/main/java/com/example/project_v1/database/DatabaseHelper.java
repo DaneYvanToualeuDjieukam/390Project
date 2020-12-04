@@ -19,11 +19,11 @@ import static com.example.project_v1.database.Config.COLUMN_DEVICE_ID;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static SQLiteDatabase dbb;
+
     private Context context;
     private static final String TAG = "DatabaseHelper";
     private FirebaseDatabase database;
-public Context con;
+
     private static SQLiteDatabase db;
 
     private DatabaseReference mDatabase;
@@ -45,8 +45,8 @@ public Context con;
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(CREATE_TABLE_DEVICE);        //create the Table Device
+sqLiteDatabase.close();
 
-       dbb=sqLiteDatabase;
 
     }
 
@@ -63,7 +63,7 @@ public Context con;
     public void addDevice(Device device) {
         //access the data base
 
-        SQLiteDatabase db=dbb;
+        SQLiteDatabase db;
         db=getWritableDatabase();
 
 
@@ -75,6 +75,7 @@ public Context con;
         values.put( Config.COLUMN_DEVICE_POWER  , device.getStatus());
         // insert row
         db.insert(Config.DEVICE_TABLE_NAME, null, values);
+        if(db!=null)
         db.close();
     }
 
@@ -86,13 +87,14 @@ public Context con;
         //delete function will return number of affected row if whereClause passed otherwise will return 0.
         //see - https://abhiandroid.com/database/operation-sqlite.html
 
-        SQLiteDatabase db=dbb;
+        SQLiteDatabase db;
         db=getWritableDatabase();
         //or use teh following
         //db.delete(TABLE_COURSES, KEY_COURSE_ID + " = " + String.valueOf(key_course),
         //       new String[] { String.valueOf(key_course) });
         //delete the course
         db.delete(Config.DEVICE_TABLE_NAME, Config.DEVICE_TABLE_NAME + " = " + device_Name, null);
+        if(db!=null)
         db.close();
     }
 
@@ -101,7 +103,7 @@ public Context con;
      */
     public void editDeviceName(String device_name) {
         //access the data base
-        SQLiteDatabase db=dbb;
+        SQLiteDatabase db;
         db=getWritableDatabase();
 
 
@@ -110,6 +112,7 @@ public Context con;
         values.put( Config.COLUMN_DEVICE_NAME ,device_name);
         // update only the device name
         db.update(Config.DEVICE_TABLE_NAME, values, Config.COLUMN_DEVICE_NAME+ "=" + device_name , null);
+        if(db!=null)
         db.close();
     }
 
@@ -119,13 +122,15 @@ public Context con;
     public void update_Device_Status(String device_name, String device_state) {
         //access the data base
 
-        SQLiteDatabase db=dbb;
+        SQLiteDatabase db;
         db=getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put( Config.COLUMN_DEVICE_STATE ,device_state);
         // update only the device name
+
         db.update(Config.DEVICE_TABLE_NAME, values, Config.COLUMN_DEVICE_NAME+ "=" + device_name , null);
+        if(db!=null)
         db.close();
     }
 
@@ -134,13 +139,14 @@ public Context con;
      */
     public void update_Device_Power(String device_name, String device_power) {
         //access the data base
-        SQLiteDatabase db=dbb;
+        SQLiteDatabase db;
         db=getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put( Config.COLUMN_DEVICE_STATE ,device_power);
         // update only the device name
         db.update(Config.DEVICE_TABLE_NAME, values, Config.COLUMN_DEVICE_NAME+ "=" + device_name , null);
+       if(db!=null)
         db.close();
     }
 
@@ -148,7 +154,7 @@ public Context con;
      * Return the user's devices info
      */
     public List<Device> getAllDevices(){
-        SQLiteDatabase db=dbb;
+        SQLiteDatabase db;
         db=getReadableDatabase();
         List <Device> deviceList =new ArrayList<>();
         Cursor cursor = null;
@@ -181,6 +187,7 @@ public Context con;
             if(cursor != null)
                 cursor.close();
         }
+        if(db!=null)
         db.close();
         return deviceList;
     }
@@ -190,7 +197,7 @@ public Context con;
      */
     public boolean is_The_Device_Name_Available(String device_Name){
 
-        SQLiteDatabase db=dbb;
+        SQLiteDatabase db;
                 db=getReadableDatabase();
 
 
@@ -232,7 +239,7 @@ public Context con;
      * Return the user's devices info
      */
     public Device getSingularDevices(int key_device){
-        SQLiteDatabase db=dbb;
+        SQLiteDatabase db;
         db=getReadableDatabase();
         Device device = new Device();
         Cursor cursor = null;
@@ -266,6 +273,7 @@ public Context con;
         {
             if(cursor != null)
                 cursor.close();
+            if(db!=null)
             db.close();
         }
 
