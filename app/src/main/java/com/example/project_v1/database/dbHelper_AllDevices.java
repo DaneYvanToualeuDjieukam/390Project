@@ -123,7 +123,7 @@ public class dbHelper_AllDevices  extends SQLiteOpenHelper{
 
             //cursor = db.query(Config.INDUS_TABLE_NAME, null, Config.INDUS_DEVICE_PASSWORD + "=?" ,new String[]{String.valueOf(device_password)},null,null,null);
             cursor = db.rawQuery(sql, null);
-//
+///
             if(cursor != null) {
                 cursor.moveToFirst();   //point the first element of the table
                 if(cursor.getString(cursor.getColumnIndex(Config.ALL_DEVICE_CODE)).equals(device_code)) {

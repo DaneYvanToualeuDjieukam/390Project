@@ -241,7 +241,7 @@ public class dbHelper_UserDevices extends SQLiteOpenHelper {
                 device.setPower(device_Power);
             }
         }
-        //
+        ///
         catch(Exception e){
             //output the error msg if one
             //Toast.makeText(context, "operation failed: " + e.getMessage(), Toast.LENGTH_LONG).show();

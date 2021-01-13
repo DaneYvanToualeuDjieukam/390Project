@@ -66,7 +66,7 @@ public class IndustrialDevice {
     public String getUseruid() {
         return useruid;
     }
-//
+///
     public void setUseruid(String power) {
         this.useruid = power;
     }
