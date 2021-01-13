@@ -345,7 +345,7 @@ public class DeviceManagement extends AppCompatActivity {
                         //now,register the customized user info in "REALTIME DATABASE"
                         Device dummyDevice = new Device(input_device_id, input_Device_Name, input_Device_State, input_Device_Power);
                         deviceList.add(dummyDevice);        //add the device in device list
-
+//
                         //add the device name - and set the status as a child
                         skip_unwanted_onDataChangeListener = true;// deactivate the firebase, onDataChange listener
                         mDatabase.child(userID).child("numberOfDevices").setValue(Integer.toString(deviceList.size()));
