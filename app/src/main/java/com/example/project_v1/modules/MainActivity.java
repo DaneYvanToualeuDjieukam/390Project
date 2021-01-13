@@ -35,7 +35,6 @@ FirebaseDatabase database;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         database = FirebaseDatabase.getInstance();
         //foregrounservice
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.FOREGROUND_SERVICE},PackageManager.PERMISSION_GRANTED);
@@ -46,7 +45,6 @@ FirebaseDatabase database;
         signinButton=findViewById(R.id.signinButton);
         registerButton=findViewById(R.id.registerButtonnn);
         fAuth= FirebaseAuth.getInstance();  //create a firebase weblink
-
 
         //go to register page
         registerButton.setOnClickListener(new View.OnClickListener() {
@@ -62,30 +60,22 @@ FirebaseDatabase database;
         signinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
-
                 final String userEmail = emailTextView.getText().toString();
                 final String password = passwordTextView.getText().toString();
 
                 //if none of the emailTextView and passwordTextView are empty
-                if (!(userEmail.equals(null) || userEmail.isEmpty() || userEmail.trim().length() <= 0) && !(password.equals(null) || password.isEmpty() || password.trim().length() <= 0)){
+                if (!(userEmail.equals(null) || userEmail.isEmpty() || userEmail.trim().length() <= 0) && !(password.equals(null) ||
+                        password.isEmpty() || password.trim().length() <= 0)){
                     fAuth.signInWithEmailAndPassword(userEmail, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
+
                             if (task.isSuccessful()) {
-
-
                                 FirebaseUser userk = fAuth.getCurrentUser();
-
                                 if (userk.isEmailVerified()==true){
-
-
                                 Toast.makeText(MainActivity.this, "Signed in", Toast.LENGTH_LONG).show();
-
-
                                 startService(); //Goes to MYSERVICE CLASS to start service for notification even when app killed
-database.goOnline();
+                                database.goOnline();
 
                                 //can only have one type of value per extra
                                 //don't use the @, as users can have multiple emails in gmail/yahoo/hotmail,etc.
@@ -94,20 +84,18 @@ database.goOnline();
                                 String dummyUID = fAuth.getUid().toString();
                                 intent.putExtra("userID", dummyUID);       //pass the userID
                                 startActivity(intent);
-
-                            } else {
-                                    fAuth.signOut();
-                                    Toast.makeText(MainActivity.this, "Email Not Verified.",
-                                        Toast.LENGTH_SHORT).show();}
-
                             }
-                            else {Toast.makeText(MainActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();}
+                            else {
+                                fAuth.signOut();
+                                Toast.makeText(MainActivity.this, "Email Not Verified.", Toast.LENGTH_SHORT).show();}
+                            }
+                            else {
+                                Toast.makeText(MainActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();}
                         }
                     });
                 }
-                else {Toast.makeText(MainActivity.this, "Authentication failed.",
-                        Toast.LENGTH_SHORT).show();}
+                else {
+                    Toast.makeText(MainActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();}
             }
 
         });

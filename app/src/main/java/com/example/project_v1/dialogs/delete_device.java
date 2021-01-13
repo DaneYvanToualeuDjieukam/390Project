@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatDialogFragment;
 import com.example.project_v1.R;
-import com.example.project_v1.database.DatabaseHelper;
+import com.example.project_v1.database.dbHelper_UserDevices;
 import com.example.project_v1.models.Device;
 import com.example.project_v1.modules.DeviceManagement;
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,7 +20,7 @@ public class delete_device extends AppCompatDialogFragment {
     protected TextView deviceNameTextView;
     private static final String USER = "user";
     private Device device;
-
+    private dbHelper_UserDevices dataBaseHelper;
     private FirebaseDatabase database;                          //All database data
     private DatabaseReference mDatabase;//user's info (name, email, password and devices)
     private FirebaseAuth Fauth;
@@ -54,6 +54,8 @@ public class delete_device extends AppCompatDialogFragment {
         database = FirebaseDatabase.getInstance();
         mDatabase = database.getReference("Devices");
 
+        dataBaseHelper = new dbHelper_UserDevices(getActivity());   //db link
+
         builder.setView(view)
                 .setTitle("CONFIRM DELETE")
                 .setCancelable(false)
@@ -68,13 +70,11 @@ public class delete_device extends AppCompatDialogFragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         //remove device from firebase
-                        ((DeviceManagement) getActivity()).loadListView(device.getName(), device.getStatus(), device.getPower(), "delete_device");
-
-                        mDatabase.child("Kul78vB").child("EditedName").setValue("NEW");
-                        mDatabase.child("Kul78vB").child("Password").setValue("HUJ");
-                        mDatabase.child("Kul78vB").child("UserID").setValue("NEW");
-
-
+                        ((DeviceManagement) getActivity()).loadListView("null", device.getName(), device.getStatus(), device.getPower(), "delete_device");
+                        mDatabase.child(device.returnID()).child("EditedName").setValue("NEW");
+                        mDatabase.child(device.returnID()).child("Password").setValue("HUJ");
+                        mDatabase.child(device.returnID()).child("UserID").setValue("NEW");
+                        dataBaseHelper.delete_Device("Kul78vB");
                     }
                 });
         return builder.create();

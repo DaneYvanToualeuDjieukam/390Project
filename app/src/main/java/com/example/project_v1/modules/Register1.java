@@ -2,7 +2,6 @@ package com.example.project_v1.modules;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -12,7 +11,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import com.example.project_v1.R;
 import com.example.project_v1.database.MyService;
 import com.example.project_v1.models.User;
@@ -33,12 +31,9 @@ public class Register1 extends AppCompatActivity {
     protected EditText confirmPasswordEditText;
     protected EditText usernameEditText;
     protected Button registerButton;
-
     private FirebaseDatabase database;
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
-
-
     private static final String USER = "user";
     private static final String TAG = "SignUp";
     private String user_KeyID = null;
@@ -50,9 +45,6 @@ public class Register1 extends AppCompatActivity {
         setContentView(R.layout.activity_register1);
         getSupportActionBar().setTitle(TAG);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
-
 
         database = FirebaseDatabase.getInstance();
 
@@ -67,7 +59,6 @@ public class Register1 extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         mDatabase = database.getReference(USER);
         mAuth = FirebaseAuth.getInstance();
-
 
         //just a lil fancy
         progressBar = findViewById(R.id.progressbar);
@@ -105,8 +96,6 @@ public class Register1 extends AppCompatActivity {
                                 FirebaseUser user= task.getResult().getUser(); //From Authentication (identifier,providers,created, SignIn,user uid)
                                 user_KeyID = user.getUid();   //the user id was way too long for arduinoo
 
-
-
                                 user=mAuth.getCurrentUser();
                               user.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
@@ -125,10 +114,6 @@ public class Register1 extends AppCompatActivity {
                                 //now,register the customized user info in "REALTIME DATABASE"
                                 User thisUser = new User(email,password,username);
                                 mDatabase.child(user_KeyID).setValue(thisUser);//add the username - title will be  a unique Key
-
-
-
-
 
 
                                 //pass the userID to the deviceManagement Page
@@ -195,7 +180,6 @@ public class Register1 extends AppCompatActivity {
     private void updateUI (FirebaseUser currentUser, String email){
         mDatabase.child(currentUser.getUid()).child("Username").setValue(email);//add the username
     }
-
 
     public void startService(){
         Intent serviceIntent = new Intent(this, MyService.class);

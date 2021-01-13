@@ -3,27 +3,21 @@ package com.example.project_v1.dialogs;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.PowerManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDialogFragment;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-
 import com.example.project_v1.R;
-import com.example.project_v1.database.DatabaseHelper;
+import com.example.project_v1.database.dbHelper_AllDevices;
+import com.example.project_v1.database.dbHelper_UserDevices;
 import com.example.project_v1.modules.DeviceManagement;
-import com.example.project_v1.modules.DeviceManagement;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,16 +32,13 @@ public class add_device extends AppCompatDialogFragment {
     private static final String USER = "user";
     private String userID;
     private String userEmail;
-    private DatabaseHelper dataBaseHelper;
-
+    private dbHelper_UserDevices dataBaseHelper;
+    private dbHelper_AllDevices dbHelper_AllDevices;
     private FirebaseDatabase database;                          //All database data
     private DatabaseReference mDatabase;//user's info (name, email, password and devices)
     private FirebaseAuth Fauth;
-private Context context;
-
-Activity activity ;
-
-
+    private Context context;
+    Activity activity ;
     String input_DeviceName = null;
     String input_DevicePassword=null;
     String input_DeviceID=null;
@@ -67,12 +58,13 @@ Activity activity ;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
-     activity =((DeviceManagement) getActivity());
         //set the Layout object size
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.fragment_add_device, null);
+
+        dataBaseHelper = new dbHelper_UserDevices(getActivity());   //db link to devices related to the user
+        dbHelper_AllDevices = new dbHelper_AllDevices(getActivity());//access all devices related to the company
 
         //fragment_insert_device object links
         deviceName = view.findViewById(R.id.deviceNameEditText);
@@ -83,110 +75,102 @@ Activity activity ;
         database = FirebaseDatabase.getInstance();
         mDatabase = database.getReference("Devices");
 
+        activity =((DeviceManagement) getActivity());   //other activity to be called
+
         builder.setView(view)
                 .setTitle("ADD DEVICES")
                 .setCancelable(false)
                 .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
-
                     }
                 })
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-
-
                         input_DeviceName = deviceName.getText().toString();
-                        input_DevicePassword=devicePassword.getText().toString();
-                        input_DeviceID=deviceID.getText().toString();
+                        input_DevicePassword = devicePassword.getText().toString();
+                        input_DeviceID = deviceID.getText().toString();
 
+                        if ((!input_DeviceName.equals(null) || !input_DeviceName.isEmpty() || !(input_DeviceName.trim().length() <= 0))) {
 
+                            //is the device's name already under the user's database?
+                            if (dataBaseHelper.is_The_Device_Name_Available(input_DeviceName)) {
 
-boolean k=false;
-DatabaseReference ref =mDatabase;
-ref.addListenerForSingleValueEvent(new ValueEventListener() {
-    @Override
-    public void onDataChange(@NonNull DataSnapshot snapshot) {
-        if(snapshot.hasChild(input_DeviceID)){
+                                //define if the device exist
+                                mDatabase.child(input_DeviceID).child("Trigger").setValue("Try")
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                // Write was successful! Therefore, the device exist (device id is written perfectly
+                                                password_id_match_and_device_available();   //define if the device is currently connected to a user, if not, then proceed
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                // Write failed, then the device does not exist
+                                                Toast.makeText(context, "Enter a valid device name", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
 
-
-
-
-            if(snapshot.child(input_DeviceID).child("EditedName").getValue().equals("NEW")
-            && snapshot.child(input_DeviceID).child("Password").getValue().equals("HUJ")){
-    mDatabase.child(input_DeviceID).child("EditedName").setValue(input_DeviceName);
-    mDatabase.child(input_DeviceID).child("Password").setValue(input_DevicePassword);
-    mDatabase.child(input_DeviceID).child("UserID").setValue(Fauth.getUid());
-                mDatabase.child(input_DeviceID).child("Time").setValue("0");
-
-
-
-                ((DeviceManagement) activity).startRepeating();
-
-
-                add_Device_If_Applicable(input_DeviceName);
-
-}else{Toast.makeText(context,"Device ALREADY IN Use",Toast.LENGTH_SHORT).show(); }
-
-
-        }else{
-            Toast.makeText(context,"Device Not Available",Toast.LENGTH_SHORT).show();}
-    }
-
-
-
-
-
-    @Override
-    public void onCancelled(@NonNull DatabaseError error) {
-
-    }
-});
-
-
-
-
-
-
-
-
+                            }
+                            else{
+                                Toast.makeText(context, "The device name is not available", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                        else {
+                            Toast.makeText(context, "Enter a valid device name", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
+
         return builder.create();
     }
 
+    //define if the device is currently connected to a user, if not, then proceed
+    private void password_id_match_and_device_available(){
 
+        //In case you want to check the single value by adding addListenerForSingleValueEvent()
+        ValueEventListener changeListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) { //Allows user to add new device if she signs out and back in (only 1)
 
+                    // get the current status in database
+                    String dummy_DeviceId = dataSnapshot.child("DeviceId").getValue(String.class);
+                    String dummy_DevicePass = dataSnapshot.child("Password").getValue(String.class);
+                    String dummy_UserIdPass = dataSnapshot.child("UserID").getValue(String.class);
 
-
-    //is the device's name already in the database?
-    private void add_Device_If_Applicable(final String device_name) {
-        dataBaseHelper = new DatabaseHelper(getActivity());   //db link
-
-        //only when it's truly empty
-        //see - https://stackoverflow.com/questions/27086808/android-check-null-or-empty-string-in-android
-        if (!(device_name.equals(null) || device_name.isEmpty() || device_name.trim().length() <= 0)) {
-            //if the device name is available
-            if (dataBaseHelper.is_The_Device_Name_Available(device_name)) {
-                //Send the device to Load view to be added
-
-                //need to use the activity which i save right away fragement called because after a while the fragement detaches from activity!
-                ((DeviceManagement) activity).loadListView(device_name, "OFF", "YES", "add_device");
+                    if(dummy_DeviceId.equals(input_DeviceID) && dummy_DevicePass.equals(input_DevicePassword)){
+                        if(dummy_UserIdPass.equals("NEW")){
+                            //remove the OnDataChangeListener
+                            mDatabase.child(input_DeviceID).removeEventListener(this);
+                            //set the trigger to access the targeted device's information
+                            mDatabase.child(input_DeviceID).child("Trigger").setValue("");
+                            //add the device under the user
+                            ((DeviceManagement) activity).loadListView(input_DeviceID, input_DeviceName, "OFF", "ON", "add_device");
+                        }
+                        else{
+                            Toast.makeText(context, "Device already in use", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    else{
+                        Toast.makeText(context,"Invalid Device ID or Password",Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else{
+                    Toast.makeText(context,"Invalid Device ID or Password",Toast.LENGTH_SHORT).show();
+                }
             }
-            else {
-                Toast.makeText(context, "The device name is not available", Toast.LENGTH_SHORT).show();
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {//do nothing
+                Toast.makeText(context, "Invalid Device ID", Toast.LENGTH_SHORT).show();
             }
-        }
-        else {
-            Toast.makeText(context, "Enter a valid name", Toast.LENGTH_SHORT).show();
-        }
+        };
+        mDatabase.child(input_DeviceID).addValueEventListener(changeListener);
+
+        //set the trigger to access the targeted device's information
+        mDatabase.child(input_DeviceID).child("Trigger").setValue("TRIG");
     }
-
-
-
-
-
-
 }

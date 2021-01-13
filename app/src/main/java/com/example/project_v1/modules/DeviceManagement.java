@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -22,13 +21,14 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Switch;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 import com.example.project_v1.R;
-import com.example.project_v1.database.DatabaseHelper;
+import com.example.project_v1.database.dbHelper_AllDevices;
+import com.example.project_v1.database.dbHelper_UserDevices;
 import com.example.project_v1.dialogs.add_device;
 import com.example.project_v1.dialogs.delete_device;
 import com.example.project_v1.models.Device;
+import com.example.project_v1.models.IndustrialDevice;
 import com.example.project_v1.models.ViewHolder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -45,28 +45,24 @@ public class DeviceManagement extends AppCompatActivity {
 
     private Handler mHandler = new Handler();
     private static Integer timestamp=1;
-
     Button settingsButton;
     protected ListView devicesListView;                         //main listView
     private static List<Device> deviceList;                           //contains all devices form a user // needs to be static so that user can sign out and come back in and add device
     protected FloatingActionButton addDeviceFloatingButton;     //add a device
     private FirebaseDatabase database;                          //All database data
-    private DatabaseReference mDatabase;//user's info (name, email, password and devices)
-
+    private DatabaseReference mDatabase;            //user's info (name, email, password and devices)
     private FirebaseDatabase adatabase;                          //All database data
-    private DatabaseReference amDatabase;//user's info (name, email, password and devices)
-
-
+    private DatabaseReference amDatabase;               //user's info (name, email, password and devices)
     private FirebaseAuth Fauth;
     private static final String USER = "user";
-    private static   String userID;
-    private DatabaseHelper dataBaseHelper;
+    private static String userID;
+    private dbHelper_UserDevices dataBaseHelper;
+    private dbHelper_AllDevices dbHelper_AllDevices;
     private boolean skip_unwanted_onDataChangeListener; //as the name says  "see function set_The_Listeners
     final myAdapter arrayAdapter = new myAdapter();
     protected List<ViewHolder> viewHolderList;
-
     public Context con;
-String userUID;
+    String userUID;
 
     public DeviceManagement() {
         super();
@@ -75,38 +71,33 @@ String userUID;
     @Override
     protected void onResume() {
         super.onResume();
-
-
         userID = Fauth.getUid();
         userUID=userID;
-
-
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        dataBaseHelper = new DatabaseHelper(this);
+        dataBaseHelper = new dbHelper_UserDevices(this);      //access the devices related to the user
+        dbHelper_AllDevices = new dbHelper_AllDevices(this);    //access all devices related to the company
         setContentView(R.layout.activity_device_management);
         deviceList = new ArrayList<>();//be sure the create an array list right at the beginning
         viewHolderList = new ArrayList<>();  // store all the view of the listview
-Fauth = FirebaseAuth.getInstance();
-
+        Fauth = FirebaseAuth.getInstance();
 
         getSupportActionBar().setTitle("Devices Management");
 
-
-        //Database related
+        //user Database related
         database = FirebaseDatabase.getInstance();
         mDatabase = database.getReference(USER);
 
+        //All Devices (industrial) related
         adatabase = FirebaseDatabase.getInstance();
-        amDatabase = database.getReference("Devices");
+        amDatabase = adatabase.getReference("Devices");
 
         devicesListView = findViewById(R.id.deviceListView);
         addDeviceFloatingButton= findViewById(R.id.floatingActionButton);
         settingsButton=findViewById(R.id.settingsButton);
-
 
         //retrieve the user email
         Intent intent = getIntent();
@@ -114,192 +105,109 @@ Fauth = FirebaseAuth.getInstance();
         userUID = userID;
 
         //determine if there are any devices related to the user.
-        //        //if yes, show them all
-        //        //if not, empty
-        loadListView("Nothing",null, null, "normal");
+        //loadListView got 3 modes
+        //  -   add device
+        //  -   delete device
+        //  -   update from the device / normal mode
+        loadListView("Nothing", "Nothing",null, null, "normal");
         skip_unwanted_onDataChangeListener = true;
+
         //  Set the different onclick
         set_The_Listeners();
         accessSettings();
         push_notification();
-
-
     }
 
     private void push_notification() {
-
-
-
-
-
         mDatabase.child(userUID).child("Devices").addChildEventListener(new ChildEventListener() {
-                                            @Override
-                                            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+            }
 
-                                            }
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                FirebaseAuth mAuth;
+                mAuth=FirebaseAuth.getInstance();
 
-                                            @Override
-                                            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                if(mAuth.getCurrentUser()!=null && userUID.equals(mAuth.getCurrentUser().getUid())){
+                    Boolean gg=false;
+                    String change =snapshot.getRef().getKey().toString();   //GETS NAME OF DEVICE INFO CHANGED
+                    String check = snapshot.child("Status").getValue().toString();  //CHECKS IF STATUS "ON"
 
-                                                FirebaseAuth mAuth;
-                                                mAuth=FirebaseAuth.getInstance();
-
-
-
-                                                if(mAuth.getCurrentUser()!=null && userUID.equals(mAuth.getCurrentUser().getUid())){
-                                                    Boolean gg=false;
-
-                                                String change =snapshot.getRef().getKey().toString();   //GETS NAME OF DEVICE INFO CHANGED
-
-                                                String check = snapshot.child("Status").getValue().toString();  //CHECKS IF STATUS "ON"
-
-                                                if(check.contains("N")){gg=true;
-
-                                                }
-
-
-
-if(gg==true){
-                                              notification(change);}
-
-
-
-
-
-
-
-
-
-
-                                            }}
-
-                                            @Override
-                                            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-                                            }
-
-                                            @Override
-                                            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                                            }
-
-                                            @Override
-                                            public void onCancelled(@NonNull DatabaseError error) {
-
-                                            }
-                                        });
-
-
-                mDatabase.child(userID).child("Devices").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-
+                    if(check.contains("N")){
+                        gg=true;
                     }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
+                    if(gg==true){
+                        notification(change);}
+                }
+            }
 
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+
+        mDatabase.child(userID).child("Devices").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
                     }
-                });
-
+        });
     }
 
     private void notification(String changedInfo){
-
-
-
-
        PowerManager pm = (PowerManager) getApplicationContext().getSystemService(Context.POWER_SERVICE);
         boolean isScreenOn = Build.VERSION.SDK_INT >= 20 ? pm.isInteractive() : pm.isScreenOn(); // check if screen is on
 
         if (!isScreenOn) {
+            if (!isScreenOn) {
+                PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "myApp:notificationLock");
+                wl.acquire(3000); //set your time in milliseconds
+            }
 
-        if (!isScreenOn) {
-            PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "myApp:notificationLock");
-            wl.acquire(3000); //set your time in milliseconds
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationChannel channel = new NotificationChannel("n","n", NotificationManager.IMPORTANCE_DEFAULT);
+                NotificationManager manager = getSystemService(NotificationManager.class);
+                manager.createNotificationChannel(channel);
+            }
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this,"n")
+                              .setContentTitle("Fire Detection System")
+                              .setContentText("FDS has detected a FIRE or SMOKE!" +"/n"+"Device:"+changedInfo)
+                              .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
+                              .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+            NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
+            managerCompat.notify(999,builder.build());
         }
 
-
-
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-        {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel("n","n", NotificationManager.IMPORTANCE_DEFAULT);
-
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(channel);
-        }
-
-    NotificationCompat.Builder builder = new NotificationCompat.Builder(this,"n")
-
-            .setContentTitle("Fire Detection System")
-            .setContentText("FDS has detected a FIRE or SMOKE!" +"/n"+"Device:"+changedInfo)
-            .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
-managerCompat.notify(999,builder.build());
-
-
-    }
-
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-        {
-            NotificationChannel channel = new NotificationChannel("n","n", NotificationManager.IMPORTANCE_DEFAULT);
-
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);
         }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this,"n")
-
-                .setContentTitle("Fire Detection System")
-                .setContentText("FDS has detected a FIRE or SMOKE!" +"\n"+"Device:"+changedInfo)
-                .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                          .setContentTitle("Fire Detection System")
+                          .setContentText("FDS has detected a FIRE or SMOKE!" +"\n"+"Device:"+changedInfo)
+                          .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
+                          .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
         managerCompat.notify(999,builder.build());
-
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     public void accessSettings(){
         settingsButton.setOnClickListener(new View.OnClickListener() {
@@ -310,11 +218,9 @@ managerCompat.notify(999,builder.build());
                 startActivity(intent);
             }
         });
-
     }
 
     private void set_The_Listeners() {
-
         // To make it professional, the user name should be defined in the register page
         addDeviceFloatingButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -322,7 +228,6 @@ managerCompat.notify(999,builder.build());
                 Context Context = v.getContext();
                 add_device dialog = new add_device(v.getContext());
                 dialog.show(getSupportFragmentManager(), "InsertDeviceFragment");    //open the dialog
-
             }
         });
 
@@ -339,7 +244,6 @@ managerCompat.notify(999,builder.build());
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists())   //Allows user to add new device if she signs out and back in (only 1)
                 if(!skip_unwanted_onDataChangeListener){
-
                         int counter = 0; //the order in the deviceList is the same as in the firebase/database
                         //loop through all devices as there is no way to determine which one was changed
                         for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
@@ -363,18 +267,55 @@ managerCompat.notify(999,builder.build());
     //determine if there are any devices related to the user.
     //        //if yes, show them all
     //        //if not, empty
-    public void loadListView(final String input_Device_Name, final String input_Device_State, final String input_Device_Power, final String action_performed) {
-       if(userID==null || userID.equals( "null")){
+    public void loadListView(final String input_device_id, final String input_Device_Name, final String input_Device_State, final String input_Device_Power, final String action_performed) {
 
+        if(userID==null || userID.equals( "null")){
+            userID = Fauth.getUid();
+            userUID=userID;
+        }
 
+/*
+        //listen all the industrial devices under the "Devices" folder
+        final DatabaseReference device_data = FirebaseDatabase.getInstance().getReference("Devices");
+        device_data.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-        userID = Fauth.getUid();
+                //be sure one can only add a device one (iff a device is not connected)
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    String dummy_id = userSnapshot.getKey();    //return the device id
+                    String dummy_name = userSnapshot.child("EditedName").getValue(String.class);
+                    String dummy_password = userSnapshot.child("Password").getValue(String.class);
+                    String dummy_time = userSnapshot.child("Time").getValue(String.class);
+                    String dummy_userUID = userSnapshot.child("UserID").getValue(String.class);
+                    IndustrialDevice dummyDevice = new IndustrialDevice(dummy_id, dummy_name, dummy_password, dummy_time, dummy_userUID);
+                    // if it return false, then the device is not already in database
+                    if(!dbHelper_AllDevices.password_id_match(dummy_password, dummy_id)) {
+                        //To add the device to teh database an industrial device
+                        if (dummy_userUID.equals("NEW") || dummy_name.equals("NEW")) {
+                            ; //return a device type (name and status)
+                            dbHelper_AllDevices.add_Industrial_Device(dummyDevice);  //add the device to db
+                        }
 
-       userUID=userID;}
+                        //someone updated our device... is it the Time?
+                        else if (dummy_userUID.equals(userUID) && dummy_time.equals("1")) {
+                            mDatabase.child(input_device_id).child("Time").setValue("0");
+                        }
+                    }
+                    else{
+                        dbHelper_AllDevices.update_Industrial_Device(dummyDevice);
+                    }
+                }
 
-
-        final DatabaseReference user_data = FirebaseDatabase.getInstance().getReference(USER).child(userID);//user's data -  devices included
-
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                //do nothing
+            }
+        });
+    */
+        //listen to the device_ under the "user" folder
+        final DatabaseReference user_data = mDatabase.child(userID);//user's data -  devices included
         //addValueEventListener() keep listening to query or database reference it is attached to.
         //addListenerForSingleValueEvent() executes onDataChange method immediately and
         //after executing that method once, it stops listening to the reference location it is attached to.
@@ -387,21 +328,41 @@ managerCompat.notify(999,builder.build());
                 //so to keep it to a minimum, the added device values are passed here and added to the firebase
                 //added to the firebase as we fill up the list view
                 //If adding a device, do not empty the deviceList,
-                //as one cannot read data from firebase and write at the same time (Data not directly update)
+                //as one cannot read data from firebase and write at the same time (Data not directly updated)
                 if (action_performed.equals("add_device")) {
-                    //now,register the customized user info in "REALTIME DATABASE"
-                    Device dummyDevice = new Device(input_Device_Name, input_Device_State, input_Device_Power);
-                    deviceList.add(dummyDevice);        //add the device in device list
+                    boolean deviceFound = false;
 
-                    //add the device name - and set the status as a child
-                    skip_unwanted_onDataChangeListener = true;// deactivate the firebase, onDataChange listener
-                    mDatabase.child(userID).child("numberOfDevices").setValue(Integer.toString(deviceList.size()));
-                    mDatabase.child(userID).child("Devices").child(dummyDevice.getName()).child("Power").setValue(dummyDevice.getPower());
-                    mDatabase.child(userID).child("Devices").child(dummyDevice.getName()).child("Status").setValue(dummyDevice.getStatus());
+                    // loop throught the deviceList to get the targeted device
+                    // sometimes it iterates twice, so just verify first
+                    for(int i = 0; i < deviceList.size(); i++){
+                        if(deviceList.get(i).getName().equals(input_Device_Name)){
+                            deviceFound = true;
+                            break;
+                        }
+                    }
+
+                    if(!deviceFound) {
+                        //now,register the customized user info in "REALTIME DATABASE"
+                        Device dummyDevice = new Device(input_device_id, input_Device_Name, input_Device_State, input_Device_Power);
+                        deviceList.add(dummyDevice);        //add the device in device list
+
+                        //add the device name - and set the status as a child
+                        skip_unwanted_onDataChangeListener = true;// deactivate the firebase, onDataChange listener
+                        mDatabase.child(userID).child("numberOfDevices").setValue(Integer.toString(deviceList.size()));
+                        mDatabase.child(userID).child("Devices").child(dummyDevice.getName()).child("Power").setValue(dummyDevice.getPower());
+                        mDatabase.child(userID).child("Devices").child(dummyDevice.getName()).child("Status").setValue(dummyDevice.getStatus());
+                        mDatabase.child(userID).child("Devices").child(dummyDevice.getName()).child("ID").setValue(dummyDevice.returnID());
+                        mDatabase.child(userID).child("Devices").child(dummyDevice.getName()).child("Status").setValue("OFF");
+
+                        //edit the user info under the "Device" Folder
+                        amDatabase.child(input_device_id).child("EditedName").setValue(input_Device_Name);
+                        amDatabase.child(input_device_id).child("UserID").setValue(userID);
+                        amDatabase.child(input_device_id).child("Time").setValue("0");
+                    }
                 }
                 //Normal operation mode of the DeviceManagementActivity
                 else if(action_performed.equals("delete_device")){
-                    Device dummyDevice = new Device(input_Device_Name, input_Device_State, input_Device_Power);
+                    Device dummyDevice = new Device(input_device_id,input_Device_Name, input_Device_State, input_Device_Power);
 
                     // loop throught the deviceList to get the targeted device
                     for(int i = 0; i < deviceList.size(); i++){
@@ -418,7 +379,7 @@ managerCompat.notify(999,builder.build());
                 else{
                     //delete all devices in list if not empty
                     //add the course to db
-                    if (!deviceList.isEmpty()) {
+                        if (!deviceList.isEmpty()) {
                         deviceList.clear();
                     }
 
@@ -433,7 +394,8 @@ managerCompat.notify(999,builder.build());
                             String dummy_name = userSnapshot.getKey();    //return the name of the device
                             String dummy_power = userSnapshot.child("Power").getValue(String.class);
                             String dummy_state = userSnapshot.child("Status").getValue(String.class);
-                            Device dummyDevice = new Device(dummy_name, dummy_state, dummy_power);; //return a device type (name and status)
+                            String dummy_id = userSnapshot.child("Status").getValue(String.class);
+                            Device dummyDevice = new Device(dummy_id,dummy_name, dummy_state, dummy_power);; //return a device type (name and status)
                             deviceList.add(dummyDevice); //deviceList will be used in the ListView
                             dataBaseHelper.addDevice(dummyDevice);  //add the device to db
                         }
@@ -531,11 +493,11 @@ managerCompat.notify(999,builder.build());
                         if (sb.isChecked()) {
                             skip_unwanted_onDataChangeListener = true;
                             update_device_states((Integer) buttonView.getTag(), "ON", "ON");
-                            mDatabase.child(userUID).child("Device").child(deviceList.get((Integer) buttonView.getTag()).getName()).child("ring_state").setValue("OFF");
+                            mDatabase.child(userUID).child("Devices").child(deviceList.get((Integer) buttonView.getTag()).getName()).child("ring_state").setValue("OFF");
                         } else {
                             skip_unwanted_onDataChangeListener = true;
                             update_device_states((Integer) buttonView.getTag(), "OFF", "ON");
-                            mDatabase.child(userUID).child("Device").child(deviceList.get((Integer) buttonView.getTag()).getName()).child("ring_state").setValue("ON");
+                            mDatabase.child(userUID).child("Devices").child(deviceList.get((Integer) buttonView.getTag()).getName()).child("ring_state").setValue("ON");
                         }
                     }
                 }
@@ -599,88 +561,56 @@ managerCompat.notify(999,builder.build());
             // set the power state in firebase
             mDatabase.child(userID).child("Devices").child(deviceList.get(position).getName()).child("Power").setValue(device_power);
         }
-
     }
 
-
-
-
-
-
-
-
-
     protected void notificationDeviceFailed(){
-
-
-
-
         PowerManager pm = (PowerManager) getApplication().getBaseContext().getSystemService(Context.POWER_SERVICE);
         boolean isScreenOn = Build.VERSION.SDK_INT >= 20 ? pm.isInteractive() : pm.isScreenOn(); // check if screen is on
 
         if (!isScreenOn) {
-
             if (!isScreenOn) {
                 PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "myApp:notificationLock");
                 wl.acquire(3000); //set your time in milliseconds
             }
 
-
-
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            {
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 NotificationChannel channel = new NotificationChannel("n","n", NotificationManager.IMPORTANCE_DEFAULT);
-
                 NotificationManager manager = getSystemService(NotificationManager.class);
                 manager.createNotificationChannel(channel);
             }
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this,"n")
-
-                    .setContentTitle("Fire Detection System")
-                    .setContentText("Device Connection Failed")
-                    .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                              .setContentTitle("Fire Detection System")
+                              .setContentText("Device Connection Failed")
+                              .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
+                              .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
             NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
             managerCompat.notify(999,builder.build());
-
-
         }
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-        {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel("n","n", NotificationManager.IMPORTANCE_DEFAULT);
-
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);
         }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this,"n")
-
-                .setContentTitle("Fire Detection System")
-                .setContentText("Device Connection Failed")
-                .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                          .setContentTitle("Fire Detection System")
+                          .setContentText("Device Connection Failed")
+                          .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark)
+                          .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         NotificationManagerCompat managerCompat = NotificationManagerCompat.from(this);
         managerCompat.notify(999,builder.build());
-
     }
-
-
-
-
-
-
-
-
 
      public void startRepeating(){
         getApplicationContext();
         mHandler.postDelayed(mNotificationRunnable,150000);
         /*mNotificationRunnable.run();*/
     }
+
     public void stopRepeating(){
         mHandler.removeCallbacks(mNotificationRunnable);
     }
@@ -688,50 +618,32 @@ managerCompat.notify(999,builder.build());
     public Runnable mNotificationRunnable = new Runnable() {
         @Override
         public void run() {
-
-
-
             mDatabase = database.getReference("Devices");
             DatabaseReference reference=mDatabase;
-
-
 
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-
-
-
                     if (snapshot.hasChild("Kul78vB")){
-                        if(Fauth.getUid().equals(snapshot.child("Kul78vB").child("UserID").getValue().toString()) ){
-//IF arduino sends integer, than change c to a integer.
+                       if(Fauth.getUid().equals(snapshot.child("Kul78vB").child("UserID").getValue().toString()) ){
+                        //IF arduino sends integer, than change c to a integer.
                        String c = snapshot.child("Kul78vB").child("Time").getValue().toString();
                        Integer k= Integer.parseInt(c);
-
-                       if(k!=timestamp){notificationDeviceFailed(); /*Toast.makeText(getApplicationContext(),"Good",Toast.LENGTH_SHORT).show();*/   }
-                       else{amDatabase.child("Kul78vB").child("Time").setValue("0");  /*Toast.makeText(getApplicationContext(),"Bad",Toast.LENGTH_SHORT).show(); */ }
-
+                       if(k!=timestamp){
+                           notificationDeviceFailed(); /*Toast.makeText(getApplicationContext(),"Good",Toast.LENGTH_SHORT).show();*/
+                       }
+                       else{
+                           amDatabase.child("Kul78vB").child("Time").setValue("0");  /*Toast.makeText(getApplicationContext(),"Bad",Toast.LENGTH_SHORT).show(); */
+                       }
                     }
                 }}
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-
                 }
             });
-
-
-
-
-
-
             mHandler.postDelayed(this,120000);
         }
     };
-
-
-
-
-
 }
